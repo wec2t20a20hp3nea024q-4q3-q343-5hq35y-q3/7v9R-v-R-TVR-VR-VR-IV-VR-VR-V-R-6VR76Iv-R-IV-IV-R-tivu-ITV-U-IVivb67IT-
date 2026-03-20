@@ -86,7 +86,7 @@
             border-bottom: 1px solid #dce5f0;
         }
         .score-area {
-            background: #1e3c72;
+            background: #2861c9e0;
             padding: 0.4rem 1.2rem;
             border-radius: 60px;
             color: white;
@@ -114,11 +114,11 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         .btn-submit {
-            background: #2c7da0;
+            background: #2ca02c;
             color: white;
         }
         .btn-submit:hover {
-            background: #1f5e7a;
+            background: #23af38;
             transform: translateY(-2px);
         }
         .btn-reset {
@@ -161,7 +161,7 @@
             border-radius: 40px;
             font-size: 0.75rem;
             font-weight: 600;
-            color: #2c5282;
+            color: #356aaa;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -282,7 +282,7 @@
             border-top: 1px solid #e2edf7;
         }
         .create-btn {
-            background: rgba(255,255,255,0.2);
+            background: rgba(202, 37, 211, 0.852);
             color: white;
             text-decoration: none;
             padding: 0.5rem 1.2rem;
@@ -310,7 +310,10 @@
     <div class="quiz-header">
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         <h1 style="margin-bottom: 0;">DSE Online Judge</h1>
-        <a href="./create" class="create-btn">➕ Create</a>
+        <span style="background: rgba(255,255,255,0.15); padding: 0.4rem 1rem; border-radius: 2rem; font-size: 0.85rem;">
+            Max ID: <span id="maxIdDisplay">-</span>
+        </span>
+        <a href="./create" class="create-btn">Create</a>
     </div>
         <div class="filter-bar">
             <div class="filter-group">
@@ -684,10 +687,20 @@
             return m;
         });
     }
+    function updateMaxIdDisplay() {
+        const maxIdSpan = document.getElementById('maxIdDisplay');
+        if (database && database.length > 0) {
+            const maxId = Math.max(...database.map(q => q.id));
+            maxIdSpan.textContent = maxId;
+        } else {
+            maxIdSpan.textContent = '0';
+        }
+    }
 
     // 初始化整个系统
     function init() {
         populateFilters();
+        updateMaxIdDisplay();  
         currentQuestions = filterQuestions();
         renderQuestions();
         bindFilterEvents();
