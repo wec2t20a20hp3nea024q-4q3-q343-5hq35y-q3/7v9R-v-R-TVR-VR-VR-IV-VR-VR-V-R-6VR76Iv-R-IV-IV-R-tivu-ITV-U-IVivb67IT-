@@ -281,6 +281,21 @@
             color: #5b6e8c;
             border-top: 1px solid #e2edf7;
         }
+        .create-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+        .create-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
         @media (max-width: 700px) {
             .questions-area { padding: 1rem; }
             .question-card { padding: 1rem; }
@@ -293,7 +308,10 @@
 <body>
 <div class="quiz-container">
     <div class="quiz-header">
-        <h1>DSE Online Judge</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <h1 style="margin-bottom: 0;">DSE Online Judge</h1>
+        <a href="./create" class="create-btn">➕ Create</a>
+    </div>
         <div class="filter-bar">
             <div class="filter-group">
                 <label>Subject</label>
