@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>题目创建工具 - 生成题库</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>题目批量导入工具</title>
     <style>
         * {
             margin: 0;
@@ -14,10 +14,9 @@
         body {
             background: #f0f7ff;
             padding: 2rem 1rem;
-            color: #1a2c3e;
         }
         .container {
-            max-width: 1100px;
+            max-width: 1000px;
             margin: 0 auto;
         }
         .card {
@@ -28,145 +27,72 @@
             margin-bottom: 2rem;
         }
         h1 {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
             gap: 10px;
-            flex-wrap: wrap;
         }
-        h1 small {
-            font-size: 0.8rem;
-            background: #eef2ff;
-            padding: 0.2rem 0.8rem;
-            border-radius: 40px;
-            color: #2c5282;
-            font-weight: normal;
-        }
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.2rem;
+        .sub {
+            color: #5b6e8c;
             margin-bottom: 1.5rem;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
-        label {
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #2c3e66;
-        }
-        input, select, textarea {
-            padding: 0.6rem 0.8rem;
-            border: 1.5px solid #dfe7ef;
-            border-radius: 1rem;
             font-size: 0.9rem;
-            transition: 0.2s;
-            background: #fefefe;
         }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #2c7da0;
-            box-shadow: 0 0 0 2px rgba(44,125,160,0.1);
-        }
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-        .option-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
-            align-items: center;
-        }
-        .option-row input {
-            flex: 1;
-        }
-        .option-row button {
-            background: #f1f5f9;
-            border: none;
-            padding: 0.4rem 0.8rem;
-            border-radius: 2rem;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-        .btn-add-option {
-            background: #eef2ff;
-            border: none;
-            padding: 0.4rem 1rem;
-            border-radius: 2rem;
-            font-size: 0.8rem;
-            cursor: pointer;
-            margin-top: 0.5rem;
-        }
-        .dynamic-options {
-            margin-top: 0.5rem;
-        }
-        .button-bar {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin: 1.5rem 0 1rem;
-        }
-        button.primary {
-            background: #2c7da0;
-            color: white;
-            border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 2rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        button.primary:hover {
-            background: #1f5e7a;
-            transform: translateY(-2px);
-        }
-        button.secondary {
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            padding: 0.7rem 1.5rem;
-            border-radius: 2rem;
-            font-weight: 500;
-            cursor: pointer;
-        }
-        button.danger {
-            background: #fff1f0;
-            border: 1px solid #f4b5b0;
-            color: #c2410c;
-            padding: 0.3rem 0.8rem;
-            border-radius: 2rem;
-            cursor: pointer;
-        }
-        .question-list {
-            margin-top: 1.5rem;
-        }
-        .question-item {
-            background: #f9fafc;
+        .format-example {
+            background: #f8fafc;
             border-left: 4px solid #2c7da0;
             padding: 1rem;
             border-radius: 1rem;
-            margin-bottom: 0.8rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
         }
-        .question-preview {
-            flex: 1;
+        .format-example pre {
+            margin-top: 0.5rem;
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 0.8rem;
+            border-radius: 0.8rem;
+            overflow-x: auto;
+        }
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1.5px solid #dfe7ef;
+            border-radius: 1rem;
+            font-family: monospace;
             font-size: 0.9rem;
+            line-height: 1.4;
+            resize: vertical;
         }
-        .badge {
-            background: #e2e8f0;
-            padding: 0.2rem 0.6rem;
-            border-radius: 40px;
-            font-size: 0.7rem;
+        textarea:focus {
+            outline: none;
+            border-color: #2c7da0;
+        }
+        .button-bar {
+            margin: 1.5rem 0;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        button {
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
             font-weight: 600;
-            margin-right: 0.5rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .primary {
+            background: #2c7da0;
+            color: white;
+        }
+        .primary:hover {
+            background: #1f5e7a;
+            transform: translateY(-2px);
+        }
+        .secondary {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
         }
         .output-area {
             background: #1e293b;
@@ -178,425 +104,272 @@
             overflow-x: auto;
             white-space: pre-wrap;
             margin-top: 1rem;
+            position: relative;
+        }
+        .copy-btn {
+            background: #3b4e6e;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 1rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        .error {
+            color: #dc2626;
+            background: #ffeae9;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
         }
         hr {
-            margin: 1.5rem 0;
+            margin: 1.2rem 0;
             border: 0;
             height: 1px;
-            background: linear-gradient(to right, #e2e8f0, transparent);
-        }
-        @media (max-width: 680px) {
-            .card { padding: 1rem; }
-            .form-grid { grid-template-columns: 1fr; }
+            background: #e2e8f0;
         }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="card">
-        <h1>📝 题目创建工具 <small>生成题库数组</small></h1>
-        <p style="color: #5b6e8c; margin-bottom: 1.2rem;">依次添加题目，最后点击「生成题库数据」导出 JSON 格式的 database 数组。</p>
+        <h1>📚 题目批量导入工具</h1>
+        <div class="sub">按照指定格式粘贴题目，一键生成压缩的 database 数组</div>
 
-        <!-- 题目输入表单 -->
-        <div class="form-grid">
-            <div class="form-group">
-                <label>📖 科目 (Subject)</label>
-                <input type="text" id="subject" placeholder="例如：语文、数学、英语" value="语文">
+        <div class="format-example">
+            <strong>📌 输入格式说明：</strong><br>
+            • 每道题之间用空行分隔。<br>
+            • <strong>选择题</strong>：第一行题目，接着4行选项，最后一行答案（A/B/C/D）<br>
+            • <strong>填空题</strong>：第一行题目，第二行答案（字符串）<br>
+            • <strong>问答题</strong>：第一行题目后添加 <code>#essay</code> 标记，第二行参考答案<br>
+            <strong>示例：</strong>
+            <pre>
+古之学者必有师，学者是什么意思？
+求學的人
+
+方程 2x+3=7 的解是？
+x=1
+x=2
+x=3
+x=4
+B
+
+请简述勾股定理。#essay
+直角三角形两直角边平方和等于斜边平方。
+            </pre>
+            <small>注：科目和课题在下方统一设置，所有题目将使用相同的科目和课题。</small>
+        </div>
+
+        <!-- 统一科目与课题 -->
+        <div style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
+            <div style="flex:1">
+                <label style="font-weight:600;">📖 科目 (Subject)</label>
+                <input type="text" id="subject" value="语文" style="width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #dfe7ef;">
             </div>
-            <div class="form-group">
-                <label>📌 课题 (Topic)</label>
-                <input type="text" id="topic" placeholder="例如：《师说》、一元一次方程" value="《师说》">
-            </div>
-            <div class="form-group">
-                <label>📋 题型 (Type)</label>
-                <select id="type">
-                    <option value="choice">单选题 (Choice)</option>
-                    <option value="fill">填空题 (Fill)</option>
-                    <option value="essay">问答题 (Essay)</option>
-                </select>
+            <div style="flex:1">
+                <label style="font-weight:600;">📌 课题 (Topic)</label>
+                <input type="text" id="topic" value="《师说》" style="width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #dfe7ef;">
             </div>
         </div>
 
-        <!-- 题目文本 -->
-        <div class="form-group" style="margin-bottom: 1rem;">
-            <label>📄 题目内容 (Question Text)</label>
-            <textarea id="questionText" rows="2" placeholder="输入题目描述..."></textarea>
-        </div>
+        <label style="font-weight:600;">📝 题目文本（按上述格式粘贴）</label>
+        <textarea id="inputText" rows="12" placeholder="在此粘贴题目..."></textarea>
 
-        <!-- 动态区域：根据题型展示不同输入 -->
-        <div id="dynamicFields"></div>
-
-        <!-- 操作按钮 -->
         <div class="button-bar">
-            <button class="primary" id="addBtn">➕ 添加题目到列表</button>
-            <button class="secondary" id="resetFormBtn">🗑️ 清空当前表单</button>
+            <button class="primary" id="parseBtn">🔍 解析并生成 JSON</button>
+            <button class="secondary" id="clearBtn">🗑️ 清空</button>
         </div>
 
-        <hr>
-
-        <!-- 已添加题目列表 -->
-        <h3>📋 已添加题目 (<span id="questionCount">0</span>)</h3>
-        <div id="questionList" class="question-list"></div>
-
-        <!-- 生成按钮 -->
-        <div class="button-bar">
-            <button class="primary" id="generateBtn">✨ 生成题库数据 (Create)</button>
-            <button class="secondary" id="clearAllBtn">🗑️ 清空所有题目</button>
+        <div id="outputArea" style="display: none;">
+            <div class="output-area">
+                <strong>📦 生成的 database 数组（压缩格式）：</strong><br>
+                <pre id="outputJson" style="white-space: pre-wrap; word-break: break-all; margin-top: 8px;"></pre>
+                <button id="copyBtn" class="copy-btn">📋 复制到剪贴板</button>
+            </div>
         </div>
-
-        <!-- 输出区域 -->
-        <div id="outputArea" class="output-area" style="display: none;">
-            <strong>📦 生成的 database 数组：</strong><br>
-            <pre id="outputJson" style="margin-top: 8px; white-space: pre-wrap; word-break: break-all;"></pre>
-            <button id="copyBtn" style="margin-top: 10px; background: #3b4e6e; color: white; border: none; padding: 4px 12px; border-radius: 20px; cursor: pointer;">📋 复制到剪贴板</button>
-        </div>
+        <div id="errorMsg" class="error" style="display: none;"></div>
     </div>
 </div>
 
 <script>
-    // 存储所有添加的题目
-    let questions = [];
-
-    // DOM 元素
     const subjectInput = document.getElementById('subject');
     const topicInput = document.getElementById('topic');
-    const typeSelect = document.getElementById('type');
-    const questionTextarea = document.getElementById('questionText');
-    const dynamicFieldsDiv = document.getElementById('dynamicFields');
-    const addBtn = document.getElementById('addBtn');
-    const resetFormBtn = document.getElementById('resetFormBtn');
-    const questionListDiv = document.getElementById('questionList');
-    const questionCountSpan = document.getElementById('questionCount');
-    const generateBtn = document.getElementById('generateBtn');
-    const clearAllBtn = document.getElementById('clearAllBtn');
+    const inputTextarea = document.getElementById('inputText');
+    const parseBtn = document.getElementById('parseBtn');
+    const clearBtn = document.getElementById('clearBtn');
     const outputArea = document.getElementById('outputArea');
     const outputJsonPre = document.getElementById('outputJson');
     const copyBtn = document.getElementById('copyBtn');
+    const errorDiv = document.getElementById('errorMsg');
 
-    // 当前表单中选择题选项 (动态)
-    let currentOptions = ['选项A', '选项B', '选项C', '选项D'];
-    let currentAnswerLetter = 'B';  // 默认
-    let currentFillAnswer = '';
-    let currentEssayReference = '';
-
-    // 渲染动态字段（根据题型）
-    function renderDynamicFields() {
-        const type = typeSelect.value;
-        let html = '';
-        if (type === 'choice') {
-            html = `
-                <div class="form-group">
-                    <label>🔘 选项列表 (至少2个，字母自动 A B C...)</label>
-                    <div id="optionsContainer" class="dynamic-options"></div>
-                    <button type="button" class="btn-add-option" id="addOptionBtn">+ 添加选项</button>
-                </div>
-                <div class="form-group">
-                    <label>✅ 正确选项字母 (如 A, B, C...)</label>
-                    <input type="text" id="answerLetter" placeholder="例如：B" maxlength="1" style="width: 80px;" value="${currentAnswerLetter}">
-                </div>
-            `;
-        } else if (type === 'fill') {
-            html = `
-                <div class="form-group">
-                    <label>📝 填空题正确答案</label>
-                    <input type="text" id="fillAnswer" placeholder="例如：5 或 李白" value="${currentFillAnswer}">
-                </div>
-            `;
-        } else if (type === 'essay') {
-            html = `
-                <div class="form-group">
-                    <label>📖 问答题参考答案</label>
-                    <textarea id="essayReference" rows="3" placeholder="提供参考答案...">${currentEssayReference}</textarea>
-                </div>
-            `;
-        }
-        dynamicFieldsDiv.innerHTML = html;
-
-        // 如果是选择题，渲染选项输入框
-        if (type === 'choice') {
-            renderOptionsInputs();
-            const answerLetterInput = document.getElementById('answerLetter');
-            if (answerLetterInput) {
-                answerLetterInput.addEventListener('input', (e) => {
-                    currentAnswerLetter = e.target.value.toUpperCase();
-                });
-            }
-        } else if (type === 'fill') {
-            const fillInput = document.getElementById('fillAnswer');
-            if (fillInput) {
-                fillInput.addEventListener('input', (e) => { currentFillAnswer = e.target.value; });
-            }
-        } else if (type === 'essay') {
-            const essayRef = document.getElementById('essayReference');
-            if (essayRef) {
-                essayRef.addEventListener('input', (e) => { currentEssayReference = e.target.value; });
-            }
-        }
+    // 辅助：判断字符串是否为单个字母（A-D）
+    function isSingleLetter(s) {
+        return /^[A-Da-d]$/.test(s.trim());
     }
 
-    // 渲染选择题选项输入框
-    function renderOptionsInputs() {
-        const container = document.getElementById('optionsContainer');
-        if (!container) return;
-        container.innerHTML = '';
-        currentOptions.forEach((opt, idx) => {
-            const div = document.createElement('div');
-            div.className = 'option-row';
-            const letter = String.fromCharCode(65 + idx); // A, B, C...
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.value = opt;
-            input.placeholder = `选项 ${letter}`;
-            input.addEventListener('input', (e) => { currentOptions[idx] = e.target.value; });
-            const delBtn = document.createElement('button');
-            delBtn.textContent = '删除';
-            delBtn.type = 'button';
-            delBtn.onclick = () => {
-                if (currentOptions.length > 2) {
-                    currentOptions.splice(idx, 1);
-                    renderOptionsInputs();
-                } else {
-                    alert('至少保留两个选项');
-                }
-            };
-            div.appendChild(input);
-            div.appendChild(delBtn);
-            container.appendChild(div);
-        });
-        // 添加选项按钮已存在，不需要重复绑定
-        const addBtn = document.getElementById('addOptionBtn');
-        if (addBtn) {
-            // 移除旧监听避免重复
-            const newBtn = addBtn.cloneNode(true);
-            addBtn.parentNode.replaceChild(newBtn, addBtn);
-            newBtn.addEventListener('click', () => {
-                if (currentOptions.length < 6) {
-                    currentOptions.push(`新选项${String.fromCharCode(65+currentOptions.length)}`);
-                    renderOptionsInputs();
-                } else {
-                    alert('最多支持6个选项');
-                }
-            });
-        }
-    }
+    // 解析文本块，返回题目对象或 null
+    function parseBlock(lines, index, subject, topic) {
+        // 去除空行
+        const nonEmpty = lines.filter(l => l.trim().length > 0);
+        if (nonEmpty.length === 0) return null;
 
-    // 获取当前表单中的题目数据（不添加到列表，仅用于预览/添加）
-    function getCurrentQuestionData() {
-        const subject = subjectInput.value.trim();
-        const topic = topicInput.value.trim();
-        const type = typeSelect.value;
-        const text = questionTextarea.value.trim();
-        if (!subject || !topic || !text) {
-            alert('请填写科目、课题和题目内容');
-            return null;
+        // 第一行是题目
+        const titleLine = nonEmpty[0];
+        let title = titleLine.trim();
+        let type = null;
+        let answerLine = null;
+        let options = null;
+
+        // 检测是否有标记 #essay 或 #fill (可扩展)
+        let essayFlag = false;
+        if (title.includes('#essay')) {
+            essayFlag = true;
+            title = title.replace(/#essay/i, '').trim();
         }
 
+        // 选择题判断：剩余行数 >=5 且 第2-5行是选项，第6行是字母
+        if (!essayFlag && nonEmpty.length >= 6) {
+            // 假设4个选项 + 答案
+            const optionLines = nonEmpty.slice(1, 5);
+            const answerLineRaw = nonEmpty[5];
+            if (optionLines.length === 4 && isSingleLetter(answerLineRaw)) {
+                type = 'choice';
+                options = optionLines.map(l => l.trim());
+                answerLine = answerLineRaw.trim().toUpperCase();
+            }
+        }
+
+        // 如果不是选择题且没有 essay 标记，且只有2行，则默认为填空题
+        if (!type && !essayFlag && nonEmpty.length === 2) {
+            type = 'fill';
+            answerLine = nonEmpty[1].trim();
+        }
+
+        // 如果有 essay 标记或未被识别但包含 essay 字样，或者用户主动标记，则作为 essay
+        if (essayFlag || (!type && nonEmpty.length === 2 && title.toLowerCase().includes('简述'))) {
+            type = 'essay';
+            answerLine = nonEmpty[1] ? nonEmpty[1].trim() : '';
+        }
+
+        // 若仍未识别，抛出错误
+        if (!type) {
+            throw new Error(`第 ${index+1} 题格式无法识别：\n${nonEmpty.join('\n')}`);
+        }
+
+        // 构建基础对象
         const base = {
+            id: 0, // 临时，后面统一赋值
             subject: subject,
             topic: topic,
             type: type,
-            text: text,
-            points: 5   // 默认5分，可后续修改
+            text: title,
+            points: 5
         };
 
         if (type === 'choice') {
-            if (currentOptions.length < 2) {
-                alert('至少需要两个选项');
-                return null;
-            }
-            const answerLetter = currentAnswerLetter.toUpperCase();
+            if (options.length < 2) throw new Error('选择题选项不足');
             const letters = ['A','B','C','D','E','F'];
-            if (!letters.includes(answerLetter) || (answerLetter.charCodeAt(0)-65) >= currentOptions.length) {
-                alert(`正确选项字母必须是 A-${letters[currentOptions.length-1]} 之一`);
-                return null;
+            const answerIdx = letters.indexOf(answerLine);
+            if (answerIdx === -1 || answerIdx >= options.length) {
+                throw new Error(`选择题答案 "${answerLine}" 超出选项范围`);
             }
             return {
                 ...base,
-                options: [...currentOptions],
-                answerLetter: answerLetter
+                options: options,
+                answerLetter: answerLine
             };
         } else if (type === 'fill') {
-            if (!currentFillAnswer) {
-                alert('请填写填空题答案');
-                return null;
-            }
             return {
                 ...base,
-                answerLetter: currentFillAnswer
+                answerLetter: answerLine
             };
         } else if (type === 'essay') {
             return {
                 ...base,
-                referenceAnswer: currentEssayReference || '（无参考答案）'
+                referenceAnswer: answerLine || '（无参考答案）'
             };
         }
         return null;
     }
 
-    // 添加题目到列表
-    function addQuestion() {
-        const qData = getCurrentQuestionData();
-        if (!qData) return;
-
-        // 生成临时id (用时间戳+随机)
-        const newId = questions.length > 0 ? Math.max(...questions.map(q => q.id)) + 1 : 1;
-        qData.id = newId;
-        questions.push(qData);
-        renderQuestionList();
-        resetForm(); // 清空表单，保留科目/课题/题型默认值（但不清除科目课题，保留上次常用值更友好）
-        updateCount();
-        // 滚动到列表
-        document.querySelector('.question-list')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    // 清空当前表单（保留科目课题的默认值可选）
-    function resetForm() {
-        questionTextarea.value = '';
-        // 重置题型相关暂存值
-        if (typeSelect.value === 'choice') {
-            currentOptions = ['选项A', '选项B', '选项C', '选项D'];
-            currentAnswerLetter = 'B';
-        } else if (typeSelect.value === 'fill') {
-            currentFillAnswer = '';
-        } else if (typeSelect.value === 'essay') {
-            currentEssayReference = '';
-        }
-        renderDynamicFields(); // 重新渲染动态区域
-    }
-
-    // 清空所有题目
-    function clearAllQuestions() {
-        if (confirm('确定要删除所有已添加的题目吗？')) {
-            questions = [];
-            renderQuestionList();
-            updateCount();
-            outputArea.style.display = 'none';
-        }
-    }
-
-    // 删除单个题目
-    function deleteQuestion(index) {
-        questions.splice(index, 1);
-        renderQuestionList();
-        updateCount();
+    // 主解析函数
+    function parseAll() {
+        errorDiv.style.display = 'none';
         outputArea.style.display = 'none';
-    }
-
-    // 编辑题目（简单填充回表单，并从列表中移除，便于修改后重新添加）
-    function editQuestion(index) {
-        const q = questions[index];
-        subjectInput.value = q.subject;
-        topicInput.value = q.topic;
-        typeSelect.value = q.type;
-        questionTextarea.value = q.text;
-        // 根据题型设置临时变量
-        if (q.type === 'choice') {
-            currentOptions = [...q.options];
-            currentAnswerLetter = q.answerLetter;
-        } else if (q.type === 'fill') {
-            currentFillAnswer = q.answerLetter;
-        } else if (q.type === 'essay') {
-            currentEssayReference = q.referenceAnswer || '';
-        }
-        renderDynamicFields();
-        // 从列表中移除原题目，以便修改后重新添加
-        questions.splice(index, 1);
-        renderQuestionList();
-        updateCount();
-        outputArea.style.display = 'none';
-        // 滚动到表单
-        document.querySelector('.form-grid')?.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // 渲染题目列表
-    function renderQuestionList() {
-        if (questions.length === 0) {
-            questionListDiv.innerHTML = '<div style="color: #7f8c8d; text-align: center; padding: 1rem;">暂无题目，请添加</div>';
+        const raw = inputTextarea.value;
+        if (!raw.trim()) {
+            showError('请输入题目文本');
             return;
         }
-        let html = '';
-        questions.forEach((q, idx) => {
-            let preview = `${q.subject} / ${q.topic} / ${q.type === 'choice' ? '选择' : q.type === 'fill' ? '填空' : '问答'}：${q.text.substring(0, 60)}${q.text.length > 60 ? '…' : ''}`;
-            if (q.type === 'choice') preview += ` (选项数:${q.options.length}, 答案:${q.answerLetter})`;
-            if (q.type === 'fill') preview += ` (答案:${q.answerLetter})`;
-            if (q.type === 'essay') preview += ` (有参考)`;
-            html += `
-                <div class="question-item">
-                    <div class="question-preview">
-                        <span class="badge">#${q.id}</span> ${preview}
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="danger" onclick="editQuestion(${idx})" style="background:#eef2ff; color:#2c5282;">✏️ 编辑</button>
-                        <button class="danger" onclick="deleteQuestion(${idx})">🗑️ 删除</button>
-                    </div>
-                </div>
-            `;
-        });
-        questionListDiv.innerHTML = html;
-    }
 
-    // 更新题目数量显示
-    function updateCount() {
-        questionCountSpan.innerText = questions.length;
-    }
-
-    // 生成最终输出
-    function generateOutput() {
-        if (questions.length === 0) {
-            alert('请至少添加一道题目');
+        const subject = subjectInput.value.trim();
+        const topic = topicInput.value.trim();
+        if (!subject || !topic) {
+            showError('请填写科目和课题');
             return;
         }
-        // 按id排序（保证顺序）
-        const sorted = [...questions].sort((a,b) => a.id - b.id);
-        const output = sorted.map(q => {
-            // 移除points默认可修改，这里保留5分
-            return { ...q, points: q.points || 5 };
-        });
-        const jsonStr = JSON.stringify(output, null, 2);
+
+        // 按空行分割块
+        const blocks = raw.split(/\n\s*\n/);
+        const questions = [];
+        let errors = [];
+
+        for (let i = 0; i < blocks.length; i++) {
+            const block = blocks[i];
+            if (!block.trim()) continue;
+            const lines = block.split('\n').map(l => l.trimEnd());
+            try {
+                const q = parseBlock(lines, i, subject, topic);
+                if (q) questions.push(q);
+            } catch (e) {
+                errors.push(`第 ${i+1} 块错误：${e.message}`);
+            }
+        }
+
+        if (errors.length > 0) {
+            showError(errors.join('\n'));
+            return;
+        }
+
+        if (questions.length === 0) {
+            showError('未解析到任何有效题目');
+            return;
+        }
+
+        // 分配 ID
+        questions.forEach((q, idx) => { q.id = idx + 1; });
+
+        // 生成压缩 JSON（无换行）
+        const jsonStr = JSON.stringify(questions);
         outputJsonPre.textContent = jsonStr;
         outputArea.style.display = 'block';
-        // 滚动到输出区域
-        outputArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // 复制到剪贴板
+    function showError(msg) {
+        errorDiv.textContent = msg;
+        errorDiv.style.display = 'block';
+        outputArea.style.display = 'none';
+    }
+
+    function clearAll() {
+        inputTextarea.value = '';
+        errorDiv.style.display = 'none';
+        outputArea.style.display = 'none';
+    }
+
     function copyToClipboard() {
         const text = outputJsonPre.textContent;
         navigator.clipboard.writeText(text).then(() => {
             alert('已复制到剪贴板');
         }).catch(() => {
-            alert('复制失败，请手动选择复制');
+            alert('复制失败，请手动复制');
         });
     }
 
-    // 监听题型变化，重新渲染动态区域
-    typeSelect.addEventListener('change', () => {
-        // 重置题型相关变量为默认值
-        if (typeSelect.value === 'choice') {
-            currentOptions = ['选项A', '选项B', '选项C', '选项D'];
-            currentAnswerLetter = 'B';
-        } else if (typeSelect.value === 'fill') {
-            currentFillAnswer = '';
-        } else if (typeSelect.value === 'essay') {
-            currentEssayReference = '';
-        }
-        renderDynamicFields();
-    });
-
-    // 事件绑定
-    addBtn.addEventListener('click', addQuestion);
-    resetFormBtn.addEventListener('click', resetForm);
-    clearAllBtn.addEventListener('click', clearAllQuestions);
-    generateBtn.addEventListener('click', generateOutput);
+    parseBtn.addEventListener('click', parseAll);
+    clearBtn.addEventListener('click', clearAll);
     copyBtn.addEventListener('click', copyToClipboard);
-
-    // 初始化渲染
-    renderDynamicFields();
-    renderQuestionList();
-    updateCount();
-    // 暴露全局函数供内联onclick调用
-    window.deleteQuestion = deleteQuestion;
-    window.editQuestion = editQuestion;
 </script>
 </body>
 </html>
