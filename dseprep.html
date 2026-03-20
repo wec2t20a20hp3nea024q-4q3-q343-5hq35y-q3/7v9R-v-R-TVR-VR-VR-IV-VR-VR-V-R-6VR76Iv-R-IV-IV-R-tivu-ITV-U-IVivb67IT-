@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>可扩展在线测验系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Roboto', 'Noto Sans', sans-serif;
+        }
+        body {
+            background: #f0f7ff;
+            padding: 2rem 1rem;
+            color: #1a2c3e;
+        }
+        .quiz-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        /* 头部筛选区 */
+        .quiz-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 1.5rem 2rem;
+            color: white;
+        }
+        .quiz-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin-top: 0.8rem;
+            background: rgba(255,255,255,0.12);
+            padding: 1rem 1.2rem;
+            border-radius: 2rem;
+            backdrop-filter: blur(2px);
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-group label {
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+        .filter-group select {
+            background: white;
+            border: none;
+            padding: 0.5rem 1.8rem 0.5rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1e3c72;
+            cursor: pointer;
+            outline: none;
+            transition: 0.2s;
+        }
+        .filter-group select:hover {
+            background: #f0f4fa;
+        }
+        /* 统计条 */
+        .stats-bar {
+            background: #eef2fa;
+            padding: 0.9rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-bottom: 1px solid #dce5f0;
+        }
+        .score-area {
+            background: #1e3c72;
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .score-area span {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0 4px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+        button {
+            border: none;
+            background: white;
+            padding: 0.5rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .btn-submit {
+            background: #2c7da0;
+            color: white;
+        }
+        .btn-submit:hover {
+            background: #1f5e7a;
+            transform: translateY(-2px);
+        }
+        .btn-reset {
+            background: #f8f9fc;
+            border: 1px solid #cbd5e1;
+            color: #2c3e66;
+        }
+        .btn-reset:hover {
+            background: #e9ecef;
+        }
+        /* 题目列表 */
+        .questions-area {
+            padding: 2rem;
+        }
+        .question-card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            margin-bottom: 1.8rem;
+            padding: 1.5rem 1.6rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e6edf4;
+            transition: box-shadow 0.2s;
+            position: relative;
+        }
+        .question-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        }
+        /* 标题行：核对按钮 + 类型 + 题目文本 */
+        .question-title-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .check-btn {
+            background: #eef2ff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #2c5282;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+            box-shadow: none;
+        }
+        .check-btn:hover {
+            background: #d9e4ff;
+            transform: scale(0.97);
+        }
+        .q-type-badge {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.2rem 0.9rem;
+            border-radius: 30px;
+            background: #e9ecef;
+            color: #2c3e66;
+        }
+        .q-type-badge.choice { background: #d9eff7; color: #0c6b8c; }
+        .q-type-badge.fill { background: #e0f2e9; color: #1f7840; }
+        .q-type-badge.essay { background: #fef2e0; color: #b45f06; }
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 550;
+            line-height: 1.4;
+            color: #0a2540;
+            flex: 1;
+        }
+        .points-badge {
+            font-size: 0.7rem;
+            background: #f1f5f9;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            color: #2c5282;
+            font-weight: 500;
+        }
+        /* 选项区域 (字母风格) */
+        .options-area {
+            margin: 1rem 0 0.8rem 0;
+            padding-left: 0;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+        }
+        .option-item input[type="radio"] {
+            flex: 0 0 2.7%;
+            width: auto;
+            margin: 0;
+        }
+        .option-item:hover {
+            background: #f8fafc;
+        }
+        .option-item input {
+            width: 18px;
+            height: 18px;
+            accent-color: #2c7da0;
+            cursor: pointer;
+        }
+        .option-item label {
+            align-items: center;
+            font-size: 0.96rem;
+            color: #1e2f44;
+            cursor: pointer;
+            width: 100%;
+        }
+        .answer-input input, .answer-input textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 20px;
+            border: 1.5px solid #dfe7ef;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            background: #fefefe;
+        }
+        .answer-input input:focus, .answer-input textarea:focus {
+            outline: none;
+            border-color: #2c7da0;
+            box-shadow: 0 0 0 3px rgba(44,125,160,0.1);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+        .feedback {
+            margin-top: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: 18px;
+            background: #f9fafc;
+            font-size: 0.85rem;
+            border-left: 4px solid #94a3b8;
+            transition: 0.1s;
+        }
+        .feedback.correct {
+            background: #e6f9ed;
+            border-left-color: #2b9348;
+            color: #145c2e;
+        }
+        .feedback.wrong {
+            background: #ffeae9;
+            border-left-color: #dc2626;
+            color: #9b1c1c;
+        }
+        .feedback.info {
+            background: #ecfdf5;
+            border-left-color: #0e7c5c;
+        }
+        footer {
+            background: #f9fbfd;
+            text-align: center;
+            padding: 1.2rem;
+            font-size: 0.8rem;
+            color: #5b6e8c;
+            border-top: 1px solid #e2edf7;
+        }
+        @media (max-width: 700px) {
+            .questions-area { padding: 1rem; }
+            .question-card { padding: 1rem; }
+            .filter-bar { flex-direction: column; gap: 0.8rem; }
+            .stats-bar { flex-direction: column; align-items: stretch; }
+            .btn-group { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-container">
+    <div class="quiz-header">
+        <h1>DSE Online Judge</h1>
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label>Subject</label>
+                <select id="subjectFilter"><option value="all">All Subjects</option></select>
+            </div>
+            <div class="filter-group">
+                <label>Type</label>
+                <select id="typeFilter"><option value="all">All Types</option></select>
+            </div>
+            <div class="filter-group">
+                <label>Topic</label>
+                <select id="topicFilter"><option value="all">All Topics</option></select>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <div class="score-area">
+            Score: <span id="totalScoreDisplay">0</span> / <span id="maxScoreDisplay">0</span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-submit" id="submitBtn">Submit</button>
+            <button class="btn-reset" id="resetBtn">Clear All</button>
+        </div>
+    </div>
+
+    <div class="questions-area" id="questionsContainer">
+        <div style="text-align: center; padding: 2rem;">Loading...</div>
+    </div>
+    <footer>
+        <!-- 💡 提示：选择题以字母(A/B/C/D)作答，填空/问答题可键入文字。点击每道题的“核对本题”实时查看正误，提交则统一计分。<br>
+        🚀 扩展方法：在下方 <code>database</code> 数组中添加新题目对象即可自动更新筛选器。 -->
+    </footer>
+</div>
+<script src="question.js"></script>
+<script>
+
+    // ======================== 以下为动态逻辑，无需修改 ========================
+    let currentQuestions = [];
+    let currentQuestionItems = [];
+
+    // 辅助：从题目数组中提取所有唯一值
+    function getUniqueValues(array, key) {
+        const values = array.map(item => item[key]).filter(v => v);
+        return [...new Set(values)].sort();
+    }
+
+    // 初始化筛选下拉框（科目、题型、课题）
+    function populateFilters() {
+        const subjects = getUniqueValues(database, "subject");
+        const types = getUniqueValues(database, "type");
+        const topics = getUniqueValues(database, "topic");
+
+        const subjectSelect = document.getElementById("subjectFilter");
+        const typeSelect = document.getElementById("typeFilter");
+        const topicSelect = document.getElementById("topicFilter");
+
+        subjectSelect.innerHTML = '<option value="all">All subjects</option>' + subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+        // 题型显示友好名称
+        const typeNames = { choice: "MC", fill: "FIB", essay: "LQ" };
+        typeSelect.innerHTML = '<option value="all">All question types</option>' + types.map(t => `<option value="${t}">${typeNames[t] || t}</option>`).join('');
+        topicSelect.innerHTML = '<option value="all">All topics</option>' + topics.map(t => `<option value="${t}">${t}</option>`).join('');
+    }
+
+    // 根据当前筛选条件过滤题目
+    function filterQuestions() {
+        const subject = document.getElementById("subjectFilter").value;
+        const type = document.getElementById("typeFilter").value;
+        const topic = document.getElementById("topicFilter").value;
+
+        return database.filter(q => {
+            if (subject !== "all" && q.subject !== subject) return false;
+            if (type !== "all" && q.type !== type) return false;
+            if (topic !== "all" && q.topic !== topic) return false;
+            return true;
+        });
+    }
+
+    // 生成字母选项映射
+    function getLetterOptions(optionsArray) {
+        const letters = ["A", "B", "C", "D", "E", "F"];
+        return optionsArray.map((opt, idx) => ({
+            letter: letters[idx],
+            content: opt
+        }));
+    }
+
+    // 根据字母获取选项内容
+    function getOptionContentByLetter(q, letter) {
+        if (!q.options) return "";
+        const letters = ["A", "B", "C", "D", "E", "F"];
+        const idx = letters.indexOf(letter.toUpperCase());
+        return (idx !== -1 && q.options[idx]) ? q.options[idx] : "";
+    }
+
+    // 单题核对逻辑
+    function checkSingleQuestion(item) {
+        const q = item.data;
+        const userAnswer = item.getAnswer ? item.getAnswer() : "";
+        const fbDiv = item.feedbackDiv;
+
+        if (q.type === "choice") {
+            const correctLetter = q.answerLetter;
+            const isCorrect = (userAnswer && userAnswer.toUpperCase() === correctLetter.toUpperCase());
+            if (isCorrect) {
+                fbDiv.innerHTML = `Accepted`;
+                fbDiv.className = "feedback correct";
+            } else {
+                const userShow = userAnswer ? `Input=${userAnswer}<br>` : "Not Attempted<br>";
+                const correctContent = getOptionContentByLetter(q, correctLetter);
+                fbDiv.innerHTML = `Wrong Answer.<br> ${userShow}Answer is ${correctLetter}, ${correctContent}`;
+                fbDiv.className = "feedback wrong";
+            }
+        }
+        else if (q.type === "fill") {
+            const correctAns = q.answerLetter;
+            const isCorrect = (userAnswer.toLowerCase() === correctAns.toLowerCase());
+            if (isCorrect) {
+                fbDiv.innerHTML = `Accepted <br>Model Answer: ${correctAns} `;// (+${q.points}分)
+                fbDiv.className = "feedback correct";
+            } else {
+                fbDiv.innerHTML = `Possible Wrong Answer<br> Input answer=“${userAnswer || 'Err: user_ans IS NULL'}”  <br>Model Answer: “${correctAns}”`;
+                fbDiv.className = "feedback wrong";
+            }
+        }
+        else if (q.type === "essay") {
+            const reference = q.referenceAnswer || "For reference ONLY.";
+            const userShow = userAnswer === '' ? 'Err: input IS NULL' : userAnswer;
+            fbDiv.innerHTML = `
+                <div><strong>Your answer...</strong><br> ${escapeHtml(userShow)}</div>
+                <div style="margin-top:6px;"><strong>Suggested Answer</strong><br> ${escapeHtml(reference)}</div>
+                <div style="margin-top:6px; font-size:0.75rem;">Do NOT only recite the answer!</div>
+            `;
+            fbDiv.className = "feedback info";
+        }
+    }
+
+    // 提交所有题目并计算总分
+    function submitAllScore() {
+        let totalScore = 0;
+        for (let item of currentQuestionItems) {
+            const q = item.data;
+            const userAnswer = item.getAnswer ? item.getAnswer() : "";
+            const fbDiv = item.feedbackDiv;
+
+            if (q.type === "choice") {
+                const correctLetter = q.answerLetter;
+                const isCorrect = (userAnswer && userAnswer.toUpperCase() === correctLetter.toUpperCase());
+                if (isCorrect) {
+                  totalScore+=q.points;
+                fbDiv.innerHTML = `Accepted`;
+                fbDiv.className = "feedback correct";
+            } else {
+                const userShow = userAnswer ? `Input=${userAnswer}<br>` : "Not Attempted<br>";
+                const correctContent = getOptionContentByLetter(q, correctLetter);
+                fbDiv.innerHTML = `Wrong Answer.<br> ${userShow}Answer is ${correctLetter}, ${correctContent}`;
+                fbDiv.className = "feedback wrong";
+            }
+            }
+            else if (q.type === "fill") {
+            const correctAns = q.answerLetter;
+            const isCorrect = (userAnswer.toLowerCase() === correctAns.toLowerCase());
+            if (isCorrect) {
+              totalScore+=q.points;
+                fbDiv.innerHTML = `Accepted <br>Model Answer: ${correctAns} `;// (+${q.points}分)
+                fbDiv.className = "feedback correct";
+            } else {
+                fbDiv.innerHTML = `Possible Wrong Answer<br> Input answer=“${userAnswer || 'Err: user_ans IS NULL'}”  <br>Model Answer: “${correctAns}”`;
+                fbDiv.className = "feedback wrong";
+            }
+        }
+            else if (q.type === "essay") {
+            const reference = q.referenceAnswer || "For reference ONLY.";
+            const userShow = userAnswer === '' ? 'Err: input IS NULL' : userAnswer;
+            fbDiv.innerHTML = `
+                <div><strong>Your answer...</strong><br> ${escapeHtml(userShow)}</div>
+                <div style="margin-top:6px;"><strong>Suggested Answer</strong><br> ${escapeHtml(reference)}</div>
+                <div style="margin-top:6px; font-size:0.75rem;">Do NOT only recite the answer!</div>
+            `;
+            fbDiv.className = "feedback info";
+        }
+        }
+        const maxPossible = currentQuestions.filter(q => q.type === "choice" || q.type === "fill").reduce((sum, q) => sum + q.points, 0);
+        document.getElementById("totalScoreDisplay").innerText = totalScore;
+        document.getElementById("maxScoreDisplay").innerText = maxPossible;
+        const stats = document.querySelector(".stats-bar");
+        stats.style.background = "#e2f0e8";
+        setTimeout(() => stats.style.background = "#eef2fa", 400);
+    }
+
+    // 清空所有答案和反馈
+    function resetCurrentAnswers() {
+        for (let item of currentQuestionItems) {
+            item.feedbackDiv.innerHTML = "Click button to check.";
+            item.feedbackDiv.className = "feedback";
+            if (item.data.type === "choice" && item.radioGroupName) {
+                const radios = document.getElementsByName(item.radioGroupName);
+                radios.forEach(r => r.checked = false);
+            } else if (item.resetElement) {
+                if (item.resetElement.tagName === "INPUT" || item.resetElement.tagName === "TEXTAREA") {
+                    item.resetElement.value = "";
+                }
+            }
+        }
+        updateScoreSummary();
+    }
+
+    // 更新总分显示区域（最大客观分）
+    function updateScoreSummary() {
+        const maxPossible = currentQuestions.filter(q => q.type === "choice" || q.type === "fill").reduce((sum, q) => sum + q.points, 0);
+        document.getElementById("maxScoreDisplay").innerText = maxPossible;
+        document.getElementById("totalScoreDisplay").innerText = "0";
+    }
+
+    // 渲染当前筛选后的题目
+    function renderQuestions() {
+        const container = document.getElementById("questionsContainer");
+        container.innerHTML = "";
+        currentQuestionItems = [];
+
+        if (currentQuestions.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:3rem;">No question satisfy your selection.</div>';
+            updateScoreSummary();
+            return;
+        }
+
+        for (let idx = 0; idx < currentQuestions.length; idx++) {
+            const q = currentQuestions[idx];
+            const card = document.createElement("div");
+            card.className = "question-card";
+
+            // 标题行
+            const titleRow = document.createElement("div");
+            titleRow.className = "question-title-row";
+
+            const checkBtn = document.createElement("button");
+            checkBtn.className = "check-btn";
+            checkBtn.innerHTML = "Submit";
+            checkBtn.setAttribute("data-qid", q.id);
+
+            let typeLabel = "", typeClass = "";
+            if (q.type === "choice") { typeLabel = "MC"; typeClass = "choice"; }
+            else if (q.type === "fill") { typeLabel = "FIB"; typeClass = "fill"; }
+            else { typeLabel = "LQ"; typeClass = "essay"; }
+            const typeSpan = document.createElement("span");
+            typeSpan.className = `q-type-badge ${typeClass}`;
+            typeSpan.innerText = typeLabel;
+
+            const questionSpan = document.createElement("span");
+            questionSpan.className = "question-text";
+            questionSpan.innerText = q.text;
+
+            const pointsSpan = document.createElement("span");
+            pointsSpan.className = "points-badge";
+            if (q.type === "choice" || q.type === "fill") pointsSpan.innerText = `${q.points}marks`;
+            else pointsSpan.innerText = "NULL marks";
+
+            titleRow.appendChild(checkBtn);
+            titleRow.appendChild(typeSpan);
+            titleRow.appendChild(questionSpan);
+            titleRow.appendChild(pointsSpan);
+            card.appendChild(titleRow);
+
+            // 输入区域
+            const inputWrapper = document.createElement("div");
+            inputWrapper.className = "answer-input";
+            let getAnswerFunc = null;
+            let resetElement = null;
+            let radioGroupName = null;
+
+            if (q.type === "choice") {
+                const letterOptions = getLetterOptions(q.options);
+                const optionsDiv = document.createElement("div");
+                optionsDiv.className = "options-area";
+                const groupName = `choice_${q.id}_${Date.now()}_${idx}`;
+                radioGroupName = groupName;
+                letterOptions.forEach(opt => {
+                    const optionDiv = document.createElement("div");
+                    optionDiv.className = "option-item";
+                    const radio = document.createElement("input");
+                    radio.type = "radio";
+                    radio.name = groupName;
+                    radio.value = opt.letter;
+                    radio.id = `${groupName}_${opt.letter}`;
+                    const label = document.createElement("label");
+                    label.htmlFor = `${groupName}_${opt.letter}`;
+                    label.innerText = `${opt.letter}. ${opt.content}`;
+                    optionDiv.appendChild(radio);
+                    optionDiv.appendChild(label);
+                    optionsDiv.appendChild(optionDiv);
+                });
+                inputWrapper.appendChild(optionsDiv);
+                getAnswerFunc = () => {
+                  const radios = document.getElementsByName(groupName);
+                  for (let r of radios) if (r.checked) return r.value;
+                  return "";
+              };
+                resetElement = { type: "radio", name: groupName };
+            }
+            else if (q.type === "fill") {
+                const inputField = document.createElement("input");
+                inputField.type = "text";
+                inputField.placeholder = "Enter your answer...";
+                inputField.autocomplete = "off";
+                inputWrapper.appendChild(inputField);
+                getAnswerFunc = () => inputField.value.trim();
+                resetElement = inputField;
+            }
+            else {
+                const textarea = document.createElement("textarea");
+                textarea.placeholder = "Enter your answer...";
+                textarea.rows = 4;
+                inputWrapper.appendChild(textarea);
+                getAnswerFunc = () => textarea.value.trim();
+                resetElement = textarea;
+            }
+
+            card.appendChild(inputWrapper);
+
+            const feedbackDiv = document.createElement("div");
+            feedbackDiv.className = "feedback";
+            feedbackDiv.id = `feedback_${q.id}`;
+            feedbackDiv.innerHTML = "Click Submit to check.";
+            card.appendChild(feedbackDiv);
+
+            container.appendChild(card);
+
+            currentQuestionItems.push({
+                id: q.id,
+                data: q,
+                getAnswer: getAnswerFunc,
+                feedbackDiv: feedbackDiv,
+                resetElement: resetElement,
+                radioGroupName: radioGroupName,
+                checkButton: checkBtn
+            });
+        }
+
+        // 绑定核对按钮事件
+        for (let item of currentQuestionItems) {
+            item.checkButton.addEventListener("click", (e) => {
+                e.stopPropagation();
+                checkSingleQuestion(item);
+            });
+        }
+
+        updateScoreSummary();
+    }
+
+    // 筛选变化时重新渲染
+    function onFilterChange() {
+        currentQuestions = filterQuestions();
+        renderQuestions();
+    }
+
+    // 绑定筛选器事件
+    function bindFilterEvents() {
+        document.getElementById("subjectFilter").addEventListener("change", onFilterChange);
+        document.getElementById("typeFilter").addEventListener("change", onFilterChange);
+        document.getElementById("topicFilter").addEventListener("change", onFilterChange);
+    }
+
+    // HTML转义
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // 初始化整个系统
+    function init() {
+        populateFilters();
+        currentQuestions = filterQuestions();
+        renderQuestions();
+        bindFilterEvents();
+        document.getElementById("submitBtn").addEventListener("click", submitAllScore);
+        document.getElementById("resetBtn").addEventListener("click", resetCurrentAnswers);
+    }
+
+    init();
+</script>
+</body>
+</html>
