@@ -691,9 +691,9 @@
         const maxIdSpan = document.getElementById('maxIdDisplay');
         if (database && database.length > 0) {
             const maxId = Math.max(...database.map(q => q.id));
-            maxIdSpan.textContent = maxId;
+            maxIdSpan.textContent = maxId+1;
         } else {
-            maxIdSpan.textContent = '0';
+            maxIdSpan.textContent = '1';
         }
     }
 
