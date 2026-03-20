@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>OJ- v0.0.1</title>
+    <title>OJ- v0.0.2</title>
     <style>
         * {
             margin: 0;
@@ -695,6 +695,81 @@
         } else {
             maxIdSpan.textContent = '1';
         }
+    }
+    // ======================== Console Effects ========================
+    let rainbowInterval = null;
+    let borderRainbowInterval = null;
+    let pulseInterval = null;
+    
+    function rainbow() {
+        if (rainbowInterval) clearInterval(rainbowInterval);
+        const container = document.querySelector('.quiz-container');
+        let hue = 0;
+        rainbowInterval = setInterval(() => {
+            hue = (hue + 1) % 360;
+            container.style.backgroundColor = `hsl(${hue}, 70%, 80%)`;
+        }, 50);
+    }
+    
+    function stoprainbow() {
+        if (rainbowInterval) {
+            clearInterval(rainbowInterval);
+            rainbowInterval = null;
+            document.querySelector('.quiz-container').style.backgroundColor = '';
+        }
+    }
+    
+    function pulse() {
+        if (pulseInterval) clearInterval(pulseInterval);
+        const scoreDiv = document.querySelector('.score-area');
+        scoreDiv.style.transition = 'all 0.2s';
+        pulseInterval = setInterval(() => {
+            scoreDiv.style.transform = 'scale(1.05)';
+            setTimeout(() => scoreDiv.style.transform = 'scale(1)', 200);
+        }, 1000);
+    }
+    
+    function stoppulse() {
+        if (pulseInterval) {
+            clearInterval(pulseInterval);
+            pulseInterval = null;
+            document.querySelector('.score-area').style.transform = '';
+        }
+    }
+    
+    function brainbow() {
+        if (borderRainbowInterval) clearInterval(borderRainbowInterval);
+        const cards = document.querySelectorAll('.question-card');
+        let hue = 0;
+        borderRainbowInterval = setInterval(() => {
+            hue = (hue + 2) % 360;
+            cards.forEach(card => {
+                card.style.border = `2px solid hsl(${hue}, 80%, 60%)`;
+            });
+        }, 100);
+    }
+    
+    function stopbrainbow() {
+        if (borderRainbowInterval) {
+            clearInterval(borderRainbowInterval);
+            borderRainbowInterval = null;
+            document.querySelectorAll('.question-card').forEach(card => {
+                card.style.border = '';
+            });
+        }
+    }
+    
+    // Optional: start all three at once
+    function startall() {
+        startRainbow();
+        startPulse();
+        startBorderRainbow();
+    }
+    
+    function stop() {
+        stopRainbow();
+        stopPulse();
+        stopBorderRainbow();
     }
 
     // 初始化整个系统
