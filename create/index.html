@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>题目批量导入工具</title>
+    <title>Question Creater</title>
     <style>
         * {
             margin: 0;
@@ -67,6 +67,28 @@
         textarea:focus {
             outline: none;
             border-color: #2c7da0;
+        }
+        .flex-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            margin-bottom: 1rem;
+        }
+        .flex-item {
+            flex: 1;
+            min-width: 150px;
+        }
+        .flex-item label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        input, .flex-item input {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 1rem;
+            border: 1px solid #dfe7ef;
         }
         .button-bar {
             margin: 1.5rem 0;
@@ -134,58 +156,62 @@
 <body>
 <div class="container">
     <div class="card">
-        <h1>📚 题目批量导入工具</h1>
-        <div class="sub">按照指定格式粘贴题目，一键生成压缩的 database 数组</div>
+        <h1>Question Creater</h1>
+        <div class="sub">Refer to the format below. ask me for id.</div>
 
         <div class="format-example">
-            <strong>📌 输入格式说明：</strong><br>
-            • 每道题之间用空行分隔。<br>
-            • <strong>选择题</strong>：第一行题目，接着4行选项，最后一行答案（A/B/C/D）<br>
-            • <strong>填空题</strong>：第一行题目，第二行答案（字符串）<br>
-            • <strong>问答题</strong>：第一行题目后添加 <code>#essay</code> 标记，第二行参考答案<br>
-            <strong>示例：</strong>
+            <strong>Input method:</strong><br>
+            A blank line between 2 questions<br>
+            • <strong>MC</strong>1st line statement, followed by 4 lines of choices, last line answer.<br>
+            • <strong>Fill in blanks</strong>First line statement, second line answer.<br>
+            • <strong>LQ</strong>Add<code>#essay</code> after the statement, second line solution.<br>
+            <strong>Sample</strong>
             <pre>
 古之学者必有师，学者是什么意思？
 求學的人
 
-方程 2x+3=7 的解是？
+nmd？
 x=1
 x=2
 x=3
 x=4
 B
 
-请简述勾股定理。#essay
-直角三角形两直角边平方和等于斜边平方。
+Write down the process of the production of HNIW#essay
+Grab some CNOH and group them using hands.
             </pre>
-            <small>注：科目和课题在下方统一设置，所有题目将使用相同的科目和课题。</small>
+            <small>ALL TASKS USES THE SAME SUBJECT,TOPIC and Starting index</small>
         </div>
 
-        <!-- 统一科目与课题 -->
-        <div style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
-            <div style="flex:1">
-                <label style="font-weight:600;">📖 科目 (Subject)</label>
-                <input type="text" id="subject" value="语文" style="width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #dfe7ef;">
+        <!-- 统一科目、课题与起始ID -->
+        <div class="flex-row">
+            <div class="flex-item">
+                <label>Subject</label>
+                <input type="text" id="subject" value="语文">
             </div>
-            <div style="flex:1">
-                <label style="font-weight:600;">📌 课题 (Topic)</label>
-                <input type="text" id="topic" value="《师说》" style="width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #dfe7ef;">
+            <div class="flex-item">
+                <label>Topic</label>
+                <input type="text" id="topic" value="《师说》">
+            </div>
+            <div class="flex-item">
+                <label>Starting id</label>
+                <input type="number" id="startId" value="1" min="1" step="1">
             </div>
         </div>
 
-        <label style="font-weight:600;">📝 题目文本（按上述格式粘贴）</label>
-        <textarea id="inputText" rows="12" placeholder="在此粘贴题目..."></textarea>
+        <label style="font-weight:600;">content</label>
+        <textarea id="inputText" rows="12" placeholder="write here"></textarea>
 
         <div class="button-bar">
-            <button class="primary" id="parseBtn">🔍 解析并生成 JSON</button>
-            <button class="secondary" id="clearBtn">🗑️ 清空</button>
+            <button class="primary" id="parseBtn">Create!!</button>
+            <button class="secondary" id="clearBtn">Clear</button>
         </div>
 
         <div id="outputArea" style="display: none;">
             <div class="output-area">
-                <strong>📦 生成的 database 数组（压缩格式）：</strong><br>
+                <strong>Result</strong><br>
                 <pre id="outputJson" style="white-space: pre-wrap; word-break: break-all; margin-top: 8px;"></pre>
-                <button id="copyBtn" class="copy-btn">📋 复制到剪贴板</button>
+                <button id="copyBtn" class="copy-btn">Copy</button>
             </div>
         </div>
         <div id="errorMsg" class="error" style="display: none;"></div>
@@ -195,6 +221,7 @@ B
 <script>
     const subjectInput = document.getElementById('subject');
     const topicInput = document.getElementById('topic');
+    const startIdInput = document.getElementById('startId');
     const inputTextarea = document.getElementById('inputText');
     const parseBtn = document.getElementById('parseBtn');
     const clearBtn = document.getElementById('clearBtn');
@@ -221,7 +248,7 @@ B
         let answerLine = null;
         let options = null;
 
-        // 检测是否有标记 #essay 或 #fill (可扩展)
+        // 检测是否有标记 #essay
         let essayFlag = false;
         if (title.includes('#essay')) {
             essayFlag = true;
@@ -230,7 +257,6 @@ B
 
         // 选择题判断：剩余行数 >=5 且 第2-5行是选项，第6行是字母
         if (!essayFlag && nonEmpty.length >= 6) {
-            // 假设4个选项 + 答案
             const optionLines = nonEmpty.slice(1, 5);
             const answerLineRaw = nonEmpty[5];
             if (optionLines.length === 4 && isSingleLetter(answerLineRaw)) {
@@ -246,7 +272,7 @@ B
             answerLine = nonEmpty[1].trim();
         }
 
-        // 如果有 essay 标记或未被识别但包含 essay 字样，或者用户主动标记，则作为 essay
+        // 如果有 essay 标记或未被识别但包含 essay 相关，则作为 essay
         if (essayFlag || (!type && nonEmpty.length === 2 && title.toLowerCase().includes('简述'))) {
             type = 'essay';
             answerLine = nonEmpty[1] ? nonEmpty[1].trim() : '';
@@ -287,7 +313,7 @@ B
         } else if (type === 'essay') {
             return {
                 ...base,
-                referenceAnswer: answerLine || '（无参考答案）'
+                referenceAnswer: answerLine || '（no suggested solution）'
             };
         }
         return null;
@@ -299,14 +325,19 @@ B
         outputArea.style.display = 'none';
         const raw = inputTextarea.value;
         if (!raw.trim()) {
-            showError('请输入题目文本');
+            showError('Enter statement.');
             return;
         }
 
         const subject = subjectInput.value.trim();
         const topic = topicInput.value.trim();
+        let startId = parseInt(startIdInput.value, 10);
+        if (isNaN(startId) || startId < 1) {
+            showError('Invalid starting index');
+            return;
+        }
         if (!subject || !topic) {
-            showError('请填写科目和课题');
+            showError('Please enter subject and topic.');
             return;
         }
 
@@ -323,7 +354,7 @@ B
                 const q = parseBlock(lines, i, subject, topic);
                 if (q) questions.push(q);
             } catch (e) {
-                errors.push(`第 ${i+1} 块错误：${e.message}`);
+                errors.push(`the ${i+1} st/nd/rd/th problem is wrong.：${e.message}`);
             }
         }
 
@@ -333,16 +364,20 @@ B
         }
 
         if (questions.length === 0) {
-            showError('未解析到任何有效题目');
+            showError('No valid problem');
             return;
         }
 
-        // 分配 ID
-        questions.forEach((q, idx) => { q.id = idx + 1; });
+        // 分配 ID，从指定起始值开始递增
+        let currentId = startId;
+        questions.forEach(q => {
+            q.id = currentId;
+            currentId++;
+        });
 
         // 生成压缩 JSON（无换行）
-        const jsonStr = JSON.stringify(questions);
-        outputJsonPre.textContent = jsonStr;
+        const lines = questions.map(q => JSON.stringify(q)).join(',\n');
+        outputJsonPre.textContent = lines;
         outputArea.style.display = 'block';
     }
 
@@ -356,14 +391,16 @@ B
         inputTextarea.value = '';
         errorDiv.style.display = 'none';
         outputArea.style.display = 'none';
+        // 可选：重置起始ID输入框，但保留用户习惯，不清空
+        // 不清空，仅重置文本
     }
 
     function copyToClipboard() {
         const text = outputJsonPre.textContent;
         navigator.clipboard.writeText(text).then(() => {
-            alert('已复制到剪贴板');
+            alert('Copied');
         }).catch(() => {
-            alert('复制失败，请手动复制');
+            alert('Failed to copy.');
         });
     }
 
