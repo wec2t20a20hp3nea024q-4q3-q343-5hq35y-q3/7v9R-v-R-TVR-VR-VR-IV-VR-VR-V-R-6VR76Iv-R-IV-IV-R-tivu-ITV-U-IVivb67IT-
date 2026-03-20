@@ -18,5 +18,8 @@ const database = [
     { id: 17, subject: "语文", topic: "《师说》", type: "choice", text: "韓愈認為「弟子不必不如師」，其核心理據是：", options: ["學生通常比老師年輕，更有活力", "老師不一定願意教導學生", "聞道有先後，術業有專攻", "社會風氣已經改變"], answerLetter: "C", points: 5 },
     { id: 18, subject: "语文", topic: "《师说》", type: "choice", text: "「不拘於時」中的「時」是指：", options: ["時間、時鐘", "當時「恥於從師」的敗壞風氣", "特定的歷史朝代", "考試的時限"], answerLetter: "B", points: 5 },
     { id: 19, subject: "语文", topic: "《师说》", type: "choice", text: "下列哪一項最能體現韓愈擇師的標準？", options: ["無貴無賤，無長無少，道之所存，師之所存也", "聖人無常師", "弟子不必不如師", "位卑則足羞，官盛則近諛"], answerLetter: "A", points: 5 },
-    { id: 20, subject: "语文", topic: "《师说》", type: "choice", text: "《師說》結尾提到李蟠「六藝經傳皆通習之」，「六藝」指的是：", options: ["禮、樂、射、御、書、數", "詩、書、禮、樂、易、春秋", "文學、修辭、邏輯、數學、天文、地理", "德、智、體、群、美、勞"], answerLetter: "B", points: 5 }
+    { id: 20, subject: "语文", topic: "《师说》", type: "choice", text: "《師說》結尾提到李蟠「六藝經傳皆通習之」，「六藝」指的是：", options: ["禮、樂、射、御、書、數", "詩、書、禮、樂、易、春秋", "文學、修辭、邏輯、數學、天文、地理", "德、智、體、群、美、勞"], answerLetter: "B", points: 5 },
+    {"id":1,"subject":"语文","topic":"《师说》","type":"fill","text":"古之学者必有师，学者是什么意思？","points":5,"answerLetter":"求學的人"},
+{"id":2,"subject":"语文","topic":"《师说》","type":"choice","text":"nmd？","points":5,"options":["x=1","x=2","x=3","x=4"],"answerLetter":"B"},
+{"id":3,"subject":"语文","topic":"《师说》","type":"essay","text":"Write down the process of the production of HNIW","points":5,"referenceAnswer":"Grab some CNOH and group them using hands."}
 ];
