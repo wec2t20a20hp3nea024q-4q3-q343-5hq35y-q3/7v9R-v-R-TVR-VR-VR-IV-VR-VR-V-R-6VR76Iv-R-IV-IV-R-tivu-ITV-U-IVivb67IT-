@@ -6,7 +6,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>OJ- v0.0.6</title>
+    <title>OJ- v0.0.7</title>
     <style>
         * {
             margin: 0;
@@ -311,6 +311,12 @@
 <body>
 <div class="quiz-container">
     <div class="quiz-header">
+        <div class="timeline-section" style="background: #f8fafc; padding: 1rem 2rem; border-bottom: 1px solid #e2edf7;">
+            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.2rem; color: #1e3c72;">📅 Upcoming Events</h3>
+            <div id="timelineContainer" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: flex-start;">
+                <!-- events will be populated here -->
+            </div>
+        </div>
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         <h1 style="margin-bottom: 0;">DSE Online Judge</h1>
         <span style="background: rgba(255,255,255,0.15); padding: 0.4rem 1rem; border-radius: 2rem; font-size: 0.85rem;">
@@ -318,6 +324,7 @@
         </span>
         <a href="./create.html" class="create-btn">Create</a>
     </div>
+        
         <div class="filter-bar">
             <div class="filter-group">
                 <label>Subject</label>
@@ -352,6 +359,46 @@
         🚀 扩展方法：在下方 <code>database</code> 数组中添加新题目对象即可自动更新筛选器。 -->
     </footer>
 </div>
+<script src="timeline.js"></script>
+    <script>
+    function updateTimeline() {
+        const container = document.getElementById('timelineContainer');
+        if (!container) return;
+        const now = new Date();
+        let html = '';
+        timelineEvents.forEach(event => {
+            const eventDate = new Date(event.date);
+            const diff = eventDate - now;
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (86400000)) / (3600000));
+                const minutes = Math.floor((diff % 3600000) / 60000);
+                const seconds = Math.floor((diff % 60000) / 1000);
+                html += `
+                    <div style="background: white; border-radius: 1rem; padding: 0.8rem 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); min-width: 200px;">
+                        <div style="font-weight: 600; color: #1e3c72;">${event.name}</div>
+                        <div style="font-size: 1.4rem; font-weight: 700; color: #2c7da0;">${days}d ${hours}h ${minutes}m ${seconds}s</div>
+                        <div style="font-size: 0.7rem; color: #6b8cae;">${eventDate.toLocaleDateString()}</div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div style="background: #fff1f0; border-radius: 1rem; padding: 0.8rem 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); min-width: 200px;">
+                        <div style="font-weight: 600; color: #b91c1c;">${event.name}</div>
+                        <div style="font-size: 1rem; color: #b91c1c;">Event passed</div>
+                        <div style="font-size: 0.7rem; color: #6b8cae;">${eventDate.toLocaleDateString()}</div>
+                    </div>
+                `;
+            }
+        });
+        container.innerHTML = html;
+    }
+
+    // Initial update
+    updateTimeline();
+    // Update every second
+    setInterval(updateTimeline, 1000);
+</script>
 <script src="question.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
