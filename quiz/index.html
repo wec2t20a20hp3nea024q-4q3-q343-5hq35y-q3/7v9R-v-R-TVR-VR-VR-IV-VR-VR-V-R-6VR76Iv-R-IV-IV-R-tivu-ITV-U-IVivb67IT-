@@ -6,7 +6,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>OJ- v0.0.5</title>
+    <title>OJ- v0.0.6</title>
     <style>
         * {
             margin: 0;
@@ -383,7 +383,23 @@
         const values = array.map(item => item[key]).filter(v => v);
         return [...new Set(values)].sort();
     }
-
+    
+function updateTopicsBySubject(selectedSubject) {
+    const topicSelect = document.getElementById("topicFilter");
+    // Get all topics from database where subject matches
+    let topics = [];
+    if (selectedSubject === "all") {
+        topics = getUniqueValues(database, "topic");
+    } else {
+        topics = database
+            .filter(q => q.subject === selectedSubject)
+            .map(q => q.topic)
+            .filter((v, i, a) => a.indexOf(v) === i);
+    }
+    topicSelect.innerHTML = '<option value="all">All Topics</option>' +
+        topics.map(t => `<option value="${t}">${t}</option>`).join('');
+}
+    
     // 初始化筛选下拉框（科目、题型、课题）
     function populateFilters() {
         const subjects = getUniqueValues(database, "subject");
@@ -399,6 +415,7 @@
         const typeNames = { choice: "MC", fill: "FIB", essay: "LQ" };
         typeSelect.innerHTML = '<option value="all">All question types</option>' + types.map(t => `<option value="${t}">${typeNames[t] || t}</option>`).join('');
         topicSelect.innerHTML = '<option value="all">All topics</option>' + topics.map(t => `<option value="${t}">${t}</option>`).join('');
+        updateTopicsBySubject(document.getElementById("subjectFilter").value);
     }
 
     // 根据当前筛选条件过滤题目
@@ -694,9 +711,13 @@
 
     // 绑定筛选器事件
     function bindFilterEvents() {
-        document.getElementById("subjectFilter").addEventListener("change", onFilterChange);
+        // document.getElementById("subjectFilter").addEventListener("change", onFilterChange);
         document.getElementById("typeFilter").addEventListener("change", onFilterChange);
         document.getElementById("topicFilter").addEventListener("change", onFilterChange);
+        document.getElementById("subjectFilter").addEventListener("change", (e) => {
+    updateTopicsBySubject(e.target.value);
+    onFilterChange();  // re-render questions with new subject and topic
+});
     }
 
     // HTML转义
