@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>OJ- v0.0.3</title>
+    <title>OJ- v0.0.4</title>
     <style>
         * {
             margin: 0;
@@ -351,7 +354,26 @@
 </div>
 <script src="question.js"></script>
 <script>
-
+    document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},   // display math
+        {left: "$", right: "$", display: false}     // inline math
+      ],
+      throwOnError: false
+    });
+  });
+    function renderMath() {
+  if (typeof renderMathInElement === 'function') {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "$", right: "$", display: false}
+      ],
+      throwOnError: false
+    });
+  }
+}
     // ======================== 以下为动态逻辑，无需修改 ========================
     let currentQuestions = [];
     let currentQuestionItems = [];
