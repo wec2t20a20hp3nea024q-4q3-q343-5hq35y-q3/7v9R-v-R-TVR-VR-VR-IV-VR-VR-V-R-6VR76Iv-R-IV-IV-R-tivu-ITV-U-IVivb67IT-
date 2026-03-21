@@ -299,6 +299,77 @@
             background: rgba(255,255,255,0.3);
             transform: translateY(-2px);
         }
+        .timeline-section {
+            background: #f8fafc;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e2edf7;
+        }
+        
+        .timeline-section h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+            color: #1e3c72;
+        }
+        
+        .timeline-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: flex-start;
+        }
+        
+        .timeline-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 0.8rem 1.2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            flex: 1 1 200px;          /* grow, shrink, basis 200px */
+            min-width: 160px;         /* allow slightly smaller on mobile */
+            max-width: 100%;          /* never overflow parent */
+        }
+        
+        .timeline-card h4 {
+            font-weight: 600;
+            color: #1e3c72;
+            margin-bottom: 0.3rem;
+        }
+        
+        .timeline-countdown {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c7da0;
+        }
+        
+        .timeline-date {
+            font-size: 0.7rem;
+            color: #6b8cae;
+        }
+        
+        .timeline-card.passed {
+            background: #fff1f0;
+        }
+        
+        .timeline-card.passed h4 {
+            color: #b91c1c;
+        }
+        
+        .timeline-card.passed .timeline-countdown {
+            color: #b91c1c;
+        }
+        
+        @media (max-width: 700px) {
+            .timeline-container {
+                gap: 0.8rem;
+            }
+            .timeline-card {
+                flex: 1 1 140px;      /* smaller basis on mobile */
+                min-width: 120px;
+                padding: 0.6rem 0.8rem;
+            }
+            .timeline-countdown {
+                font-size: 1.1rem;
+            }
+        }
         @media (max-width: 700px) {
             .questions-area { padding: 1rem; }
             .question-card { padding: 1rem; }
