@@ -9,8 +9,6 @@ const timelineEvents = [
     { name: "F4 2nd UT Biology",   date: "2026-03-25T10:00:00" },
     { name: "F4 2nd UT CSD",       date: "2026-03-26T08:30:00" },
     { name: "F4 2nd UT Chemistry", date: "2026-03-27T08:30:00" },
-    { name: "F4 Final", date: "2025-07-15T00:00:00" },
-    { name: "F4 Final", date: "2025-07-15T00:00:00" },
-    { name: "F4 Final", date: "2025-07-15T00:00:00" },
-    { name: "F4 Final", date: "2025-07-15T00:00:00" }
+    { name: "F4 Final", date: "2026-06-05T00:00:00" }
+    
 ];
