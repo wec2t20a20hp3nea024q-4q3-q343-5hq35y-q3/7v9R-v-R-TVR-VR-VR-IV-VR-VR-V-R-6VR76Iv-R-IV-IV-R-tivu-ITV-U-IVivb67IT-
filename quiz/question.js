@@ -25,7 +25,11 @@ const database = [
         {"id":25,"subject":"中國語文","topic":"單元一 論仁、論孝、論君子","type":"choice","text":"《論語》的體裁是什麼？","points":5,"options":["議論文","雜記","語錄體","散文"],"answerLetter":"C"},
   {"id":25,"subject":"中國語文","topic":"單元一 論仁、論孝、論君子","type":"choice","text":"《論語》的體裁是什麼？","points":5,"options":["議論文","雜記","語錄體","散文"],"answerLetter":"C"},
   {"id":26,"subject":"中國語文","topic":"單元一 論仁、論孝、論君子","type":"choice","text":"承上題，這種體裁有何特點？","points":5,"options":["簡而精","論證嚴密","組織嚴密，結構清晰","文辭綺麗"],"answerLetter":"A"},
-  {"id":27,"subject":"中國語文","topic":"單元一 論仁、論孝、論君子","type":"choice","text":"以下選項均是本文特色，何者能反映題1所選的體裁？ <br>(1)多用排比對偶<br> (2)多用反問句<br> (3)以對答建構全文<br> (4)組織沒有章法","points":5,"options":["(1)、(3)","(2)、(3)","(2)、(4)","(2)、(3)、(4)"],"answerLetter":"D"},
+  {"id":27,"subject":"中國語文","topic":"單元一 論仁、論孝、論君子","type":"choice","text":"以下選項均是本文特色，何者能反映題1所選的體裁？ 
+(1)多用排比對偶
+ (2)多用反問句
+ (3)以對答建構全文
+ (4)組織沒有章法","points":5,"options":["(1)、(3)","(2)、(3)","(2)、(4)","(2)、(3)、(4)"],"answerLetter":"D"},
   {"id":28,"subject":"中國語文","topic":"單元一 論仁、論孝、論君子","type":"choice","text":"《論語》的作者是誰？ (1)孔子 (2)孔子弟子 (3)孔子親友","points":5,"options":["(1)","(2)","(3)","(1)、(2)"],"answerLetter":"B"},
   {"id":29,"subject":"中國語文","topic":"單元一 論仁、論孝、論君子","type":"choice","text":"「不可以久處約」一句中的「約」字何解？","points":5,"options":["信約","約束","惡劣的環境","貧困的環境"],"answerLetter":"D"},
   {"id":30,"subject":"中國語文","topic":"單元一 論仁、論孝、論君子","type":"choice","text":"「不可以久處約」和「不處也」兩句中的「處」字分別何解？","points":5,"options":["身處；接受","接受；身處","居於；安排","住處；接受"],"answerLetter":"A"},
@@ -845,8 +849,17 @@ const database = [
   {"id":844,"subject":"中國語文","topic":"單元十三 跨篇章題目","type":"choice","text":"98. 《勸學》與《逍遙遊》均以動物作喻說理，以下哪項有關二文的描述為正確？ (1) 二文均提到了動物的天資。 (2) 二文均提到了動物的生活習慣。 (3) 二文均以動物喻人。 (4) 二文均以動物作對比論證。","points":5,"options":["A. (1)、(2)","B. (3)、(4)","C. (1)、(2)、(4)","D. (1)、(2)、(3)、(4)"],"answerLetter":"D"},
   {"id":845,"subject":"中國語文","topic":"單元十三 跨篇章題目","type":"choice","text":"99. 《廉頗藺相如列傳》與《始得西山宴遊記》均有敘事，二文的敘事手法有何異同？ (1) 前者使用順敘法，後者使用倒敘法。 (2) 前者運用伏筆，後者平鋪直敘。 (3) 二文均以第三人稱敘事。 (4) 二文均記錄了事件的起因、經過、結果。","points":5,"options":["A. (1)、(4)","B. (2)、(3)","C. (1)、(2)、(4)","D. (1)、(3)、(4)"],"answerLetter":"A"},
   {"id":846,"subject":"中國語文","topic":"單元十三 跨篇章題目","type":"choice","text":"100. 文言經典常運用襯托手法，以下何者同時運用正襯和反襯？ (1) 《始得西山宴遊記》 (2) 《山居秋暝》 (3) 《念奴嬌·赤壁懷古》 (4) 《青玉案·元夕》","points":5,"options":["A. (1)","B. (1)、(3)","C. (2)、(4)","D. (1)、(3)、(4)"],"answerLetter":"B"},
-  {"id":847,"subject":"化學","topic":"Chapter 14: Introduction to acids and alkalis","type":"choice","text":"Which of the following combinations about acids is INCORRECT?<br><br>Acid\tPresent in<br>A. Sulphuric acid\tGastric juice<br>B. Citric acid\tOrange juice<br>C. Ethanoic acid\tVinegar<br>D. Carbonic acid\tSoft drinks","points":5,"options":["Sulphuric acid\tGastric juice","Citric acid\tOrange juice","Ethanoic acid\tVinegar"," Carbonic acid\tSoft drinks"],"answerLetter":"A"},
-  {"id":848,"subject":"化學","topic":"Chapter 14: Introduction to acids and alkalis","type":"choice","text":"Which of the following acids can be found in lemons?<br>(1) Ascorbic acid<br>(2) Citric acid<br>(3) Oxalic acid","points":5,"options":["(1) and (2) only","(1) and (3) only","(2) and (3) only"," (1), (2) and (3)"],"answerLetter":"A"},
+  {"id":847,"subject":"化學","topic":"Chapter 14: Introduction to acids and alkalis","type":"choice","text":"Which of the following combinations about acids is INCORRECT?
+
+Acid\tPresent in
+A. Sulphuric acid\tGastric juice
+B. Citric acid\tOrange juice
+C. Ethanoic acid\tVinegar
+D. Carbonic acid\tSoft drinks","points":5,"options":["Sulphuric acid\tGastric juice","Citric acid\tOrange juice","Ethanoic acid\tVinegar"," Carbonic acid\tSoft drinks"],"answerLetter":"A"},
+  {"id":848,"subject":"化學","topic":"Chapter 14: Introduction to acids and alkalis","type":"choice","text":"Which of the following acids can be found in lemons?
+(1) Ascorbic acid
+(2) Citric acid
+(3) Oxalic acid","points":5,"options":["(1) and (2) only","(1) and (3) only","(2) and (3) only"," (1), (2) and (3)"],"answerLetter":"A"},
   {"id":849,"subject":"化學","topic":"Chapter 14: Introduction to acids and alkalis","type":"choice","text":"Which of the following acids are organic acids?\n(1) Carbonic acid\n(2) Ethanoic acid\n(3) Lactic acid","points":5,"options":["(1) and (2) only","(1) and (3) only","(2) and (3) only"," (1), (2) and (3)"],"answerLetter":"C"},
   {"id":850,"subject":"化學","topic":"Chapter 14: Introduction to acids and alkalis","type":"choice","text":"Which of the following are the characteristics of acids?\n(1) They react with potassium carbonate to form salt, carbon dioxide and water.\n(2) They react with copper to form hydrogen and salt.\n(3) They produce hydrogen ions when dissolved in water.","points":5,"options":["(1) and (2) only","(1) and (3) only","(2) and (3) only"," (1), (2) and (3)"],"answerLetter":"B"},
   {"id":851,"subject":"化學","topic":"Chapter 14: Introduction to acids and alkalis","type":"choice","text":"Which of the following is NOT a characteristic of dilute acids?","points":5,"options":["It turns blue litmus paper re","It reacts with copper to give hydrogen.","It conducts electricity."," It reacts with copper(II) carbonate to give carbon dioxide."],"answerLetter":"B"},
