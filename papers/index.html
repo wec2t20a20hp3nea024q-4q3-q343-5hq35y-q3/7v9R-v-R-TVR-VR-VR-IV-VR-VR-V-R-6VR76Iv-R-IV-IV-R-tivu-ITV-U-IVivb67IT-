@@ -1,1 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Question Creator & PDF Exporter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+        }
 
+        body {
+            background: #f0f7ff;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Form Card */
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: #1e3c72;
+        }
+
+        .sub {
+            color: #5b6e8c;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: #2c3e66;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1.5px solid #dfe7ef;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #2c7da0;
+            box-shadow: 0 0 0 2px rgba(44,125,160,0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .option-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .option-row input {
+            flex: 1;
+        }
+
+        .btn-add-option, .btn-remove-option {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 0.4rem 0.8rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-add-option:hover, .btn-remove-option:hover {
+            background: #e2e8f0;
+        }
+
+        .button-bar {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0 1rem;
+        }
+
+        button {
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-primary {
+            background: #2c7da0;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1f5e7a;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-danger {
+            background: #ffeae9;
+            color: #b91c1c;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Question List */
+        .questions-list {
+            margin-top: 1.5rem;
+        }
+
+        .question-item {
+            background: #f9fafc;
+            border-left: 4px solid #2c7da0;
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .question-preview {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            background: #e2e8f0;
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .question-actions button {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        hr {
+            margin: 1.2rem 0;
+            border: 0;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        /* Print styles for PDF generation */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .no-print {
+                display: none;
+            }
+            .print-question {
+                page-break-after: avoid;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                margin: 0;
+                padding: 1.2rem;
+                border: 1px solid #ddd;
+                border-radius: 0;
+                margin-bottom: 0;
+            }
+            .print-question + .print-question {
+                page-break-before: avoid;
+                break-before: avoid;
+            }
+            /* Force a page break before a question if it would otherwise be split */
+            .print-question {
+                break-inside: avoid;
+            }
+            .page-break-before {
+                page-break-before: always;
+                break-before: page;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card no-print">
+        <h1>📝 Question Builder</h1>
+        <div class="sub">Create multiple-choice and long-answer questions, then export to PDF with clean page breaks.</div>
+
+        <!-- Form for adding questions -->
+        <div class="form-row">
+            <div class="form-group">
+                <label>Question Type</label>
+                <select id="qType">
+                    <option value="mc">Multiple Choice (MC)</option>
+                    <option value="long">Long Answer</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Question Text</label>
+            <textarea id="qText" rows="2" placeholder="Enter the question..."></textarea>
+        </div>
+
+        <!-- Dynamic area for MC options -->
+        <div id="mcOptionsArea" style="margin-top: 1rem;">
+            <label>Options (for MC)</label>
+            <div id="optionsContainer"></div>
+            <button type="button" class="btn-add-option" id="addOptionBtn" style="margin-top: 0.5rem;">+ Add Option</button>
+            <div class="form-group" style="margin-top: 0.5rem;">
+                <label>Correct Answer Letter (A, B, C, D...)</label>
+                <input type="text" id="correctLetter" placeholder="e.g., B" maxlength="1" style="width: 80px;">
+            </div>
+        </div>
+
+        <!-- Area for long answer reference -->
+        <div id="longAnswerArea" style="display: none; margin-top: 1rem;">
+            <div class="form-group">
+                <label>Reference Answer (optional)</label>
+                <textarea id="refAnswer" rows="3" placeholder="Provide a model answer..."></textarea>
+            </div>
+        </div>
+
+        <div class="button-bar">
+            <button class="btn-primary" id="addBtn">➕ Add Question</button>
+            <button class="btn-secondary" id="clearFormBtn">🗑️ Clear Form</button>
+        </div>
+    </div>
+
+    <!-- List of added questions -->
+    <div class="card no-print">
+        <h2>📋 Questions (<span id="questionCount">0</span>)</h2>
+        <div id="questionsList" class="questions-list"></div>
+        <div class="button-bar">
+            <button class="btn-primary" id="generatePdfBtn">📄 Generate PDF</button>
+            <button class="btn-secondary" id="clearAllBtn">🗑️ Clear All Questions</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Store questions
+    let questions = [];
+
+    // DOM elements
+    const qTypeSelect = document.getElementById('qType');
+    const qTextArea = document.getElementById('qText');
+    const mcOptionsDiv = document.getElementById('mcOptionsArea');
+    const longAnswerDiv = document.getElementById('longAnswerArea');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const correctLetterInput = document.getElementById('correctLetter');
+    const refAnswerTextarea = document.getElementById('refAnswer');
+    const addBtn = document.getElementById('addBtn');
+    const clearFormBtn = document.getElementById('clearFormBtn');
+    const questionsListDiv = document.getElementById('questionsList');
+    const questionCountSpan = document.getElementById('questionCount');
+    const generatePdfBtn = document.getElementById('generatePdfBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+
+    // Current options array
+    let currentOptions = ['Option A', 'Option B', 'Option C', 'Option D'];
+
+    // Toggle between MC and Long Answer UI
+    function toggleQuestionType() {
+        const isMc = qTypeSelect.value === 'mc';
+        mcOptionsDiv.style.display = isMc ? 'block' : 'none';
+        longAnswerDiv.style.display = isMc ? 'none' : 'block';
+        if (isMc) {
+            renderOptionsInputs();
+        }
+    }
+
+    // Render the option inputs
+    function renderOptionsInputs() {
+        optionsContainer.innerHTML = '';
+        currentOptions.forEach((opt, idx) => {
+            const letter = String.fromCharCode(65 + idx); // A, B, C...
+            const div = document.createElement('div');
+            div.className = 'option-row';
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = opt;
+            input.placeholder = `Option ${letter}`;
+            input.addEventListener('input', (e) => { currentOptions[idx] = e.target.value; });
+            const delBtn = document.createElement('button');
+            delBtn.textContent = '✖';
+            delBtn.className = 'btn-remove-option';
+            delBtn.type = 'button';
+            delBtn.onclick = () => {
+                if (currentOptions.length > 2) {
+                    currentOptions.splice(idx, 1);
+                    renderOptionsInputs();
+                } else {
+                    alert('At least two options are required.');
+                }
+            };
+            div.appendChild(input);
+            div.appendChild(delBtn);
+            optionsContainer.appendChild(div);
+        });
+        // Re-attach add button listener (it already exists, but ensure it works)
+        const addOptBtn = document.getElementById('addOptionBtn');
+        if (addOptBtn) {
+            addOptBtn.onclick = () => {
+                if (currentOptions.length < 6) {
+                    const newLetter = String.fromCharCode(65 + currentOptions.length);
+                    currentOptions.push(`Option ${newLetter}`);
+                    renderOptionsInputs();
+                } else {
+                    alert('Maximum 6 options.');
+                }
+            };
+        }
+    }
+
+    // Get current question data from form
+    function getCurrentQuestion() {
+        const type = qTypeSelect.value;
+        const text = qTextArea.value.trim();
+        if (!text) {
+            alert('Please enter question text.');
+            return null;
+        }
+        const base = {
+            type: type,
+            text: text
+        };
+        if (type === 'mc') {
+            if (currentOptions.length < 2) {
+                alert('At least two options required for MC.');
+                return null;
+            }
+            const letter = correctLetterInput.value.trim().toUpperCase();
+            const validLetters = ['A','B','C','D','E','F'];
+            if (!validLetters.includes(letter) || (letter.charCodeAt(0)-65) >= currentOptions.length) {
+                alert(`Correct answer must be a letter A-${validLetters[currentOptions.length-1]}.`);
+                return null;
+            }
+            return {
+                ...base,
+                options: [...currentOptions],
+                answer: letter
+            };
+        } else {
+            // Long answer
+            const ref = refAnswerTextarea.value.trim();
+            return {
+                ...base,
+                reference: ref || '(No reference provided)'
+            };
+        }
+    }
+
+    // Add question to list
+    function addQuestion() {
+        const q = getCurrentQuestion();
+        if (!q) return;
+        questions.push(q);
+        renderQuestionsList();
+        clearForm();
+    }
+
+    // Clear form
+    function clearForm() {
+        qTextArea.value = '';
+        // Reset MC options to default
+        currentOptions = ['Option A', 'Option B', 'Option C', 'Option D'];
+        correctLetterInput.value = '';
+        refAnswerTextarea.value = '';
+        renderOptionsInputs();
+        toggleQuestionType(); // refresh UI
+    }
+
+    // Delete a question
+    function deleteQuestion(index) {
+        questions.splice(index, 1);
+        renderQuestionsList();
+    }
+
+    // Edit a question (load into form, then remove from list for re-add)
+    function editQuestion(index) {
+        const q = questions[index];
+        qTypeSelect.value = q.type;
+        qTextArea.value = q.text;
+        if (q.type === 'mc') {
+            currentOptions = [...q.options];
+            correctLetterInput.value = q.answer;
+        } else {
+            refAnswerTextarea.value = q.reference;
+        }
+        toggleQuestionType(); // show correct UI
+        renderOptionsInputs(); // refresh options
+        // Remove original so that after edit we can add again
+        questions.splice(index, 1);
+        renderQuestionsList();
+        // Scroll to form
+        document.querySelector('.card').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Render the list of added questions
+    function renderQuestionsList() {
+        if (questions.length === 0) {
+            questionsListDiv.innerHTML = '<div style="text-align:center; padding:1rem; color:#7f8c8d;">No questions added yet.</div>';
+            questionCountSpan.textContent = '0';
+            return;
+        }
+        let html = '';
+        questions.forEach((q, idx) => {
+            let preview = `${q.type === 'mc' ? 'MC' : 'Long'}: ${q.text.substring(0, 70)}${q.text.length > 70 ? '…' : ''}`;
+            if (q.type === 'mc') {
+                preview += ` (${q.options.length} options, answer: ${q.answer})`;
+            }
+            html += `
+                <div class="question-item">
+                    <div class="question-preview">
+                        <span class="badge">#${idx+1}</span> ${preview}
+                    </div>
+                    <div class="question-actions">
+                        <button class="btn-secondary" onclick="editQuestion(${idx})">✏️ Edit</button>
+                        <button class="btn-danger" onclick="deleteQuestion(${idx})">🗑️ Delete</button>
+                    </div>
+                </div>
+            `;
+        });
+        questionsListDiv.innerHTML = html;
+        questionCountSpan.textContent = questions.length;
+    }
+
+    // Generate PDF using print method (respects CSS page breaks)
+    function generatePDF() {
+        if (questions.length === 0) {
+            alert('No questions to export.');
+            return;
+        }
+
+        // Build HTML for printing
+        let printHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Question Paper</title>
+                <style>
+                    body {
+                        font-family: 'Segoe UI', 'Roboto', sans-serif;
+                        margin: 0;
+                        padding: 1.5cm;
+                        background: white;
+                    }
+                    .page {
+                        width: 100%;
+                    }
+                    .question-block {
+                        margin-bottom: 1.5rem;
+                        page-break-inside: avoid;
+                        break-inside: avoid;
+                        border-bottom: 1px solid #ddd;
+                        padding-bottom: 1rem;
+                    }
+                    .question-number {
+                        font-weight: bold;
+                        font-size: 1.1rem;
+                        margin-bottom: 0.5rem;
+                        color: #1e3c72;
+                    }
+                    .question-text {
+                        font-weight: 500;
+                        margin-bottom: 0.8rem;
+                        line-height: 1.4;
+                    }
+                    .options {
+                        margin-left: 1rem;
+                        margin-bottom: 0.8rem;
+                    }
+                    .option {
+                        margin: 0.3rem 0;
+                    }
+                    .answer-box {
+                        margin-top: 0.5rem;
+                        padding: 0.5rem;
+                        background: #f9fafc;
+                        border-left: 3px solid #2c7da0;
+                        font-size: 0.9rem;
+                    }
+                    .reference {
+                        color: #2c3e66;
+                    }
+                    hr {
+                        margin: 1rem 0;
+                    }
+                    @media print {
+                        body {
+                            padding: 0.5in;
+                        }
+                        .question-block {
+                            page-break-inside: avoid;
+                            break-inside: avoid;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="page">
+        `;
+
+        questions.forEach((q, idx) => {
+            printHtml += `<div class="question-block">`;
+            printHtml += `<div class="question-number">${idx+1}. ${q.type === 'mc' ? 'Multiple Choice' : 'Long Answer'}</div>`;
+            printHtml += `<div class="question-text">${escapeHtml(q.text)}</div>`;
+            if (q.type === 'mc') {
+                printHtml += `<div class="options">`;
+                const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+                q.options.forEach((opt, optIdx) => {
+                    printHtml += `<div class="option">${letters[optIdx]}. ${escapeHtml(opt)}</div>`;
+                });
+                printHtml += `</div>`;
+                printHtml += `<div class="answer-box"><strong>Answer:</strong> ${q.answer}</div>`;
+            } else {
+                if (q.reference) {
+                    printHtml += `<div class="answer-box reference"><strong>Reference Answer:</strong><br>${escapeHtml(q.reference)}</div>`;
+                } else {
+                    printHtml += `<div class="answer-box"><em>No reference answer provided.</em></div>`;
+                }
+            }
+            printHtml += `</div>`;
+        });
+
+        printHtml += `
+                </div>
+            </body>
+            </html>
+        `;
+
+        // Open a new window and print
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(printHtml);
+        printWindow.document.close();
+        printWindow.onload = () => {
+            printWindow.print();
+            // Optional: close after print? Usually not, user can close.
+        };
+    }
+
+    // Escape HTML for safe printing
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // Clear all questions
+    function clearAll() {
+        if (confirm('Delete all questions?')) {
+            questions = [];
+            renderQuestionsList();
+        }
+    }
+
+    // Event listeners
+    qTypeSelect.addEventListener('change', toggleQuestionType);
+    addBtn.addEventListener('click', addQuestion);
+    clearFormBtn.addEventListener('click', clearForm);
+    generatePdfBtn.addEventListener('click', generatePDF);
+    clearAllBtn.addEventListener('click', clearAll);
+
+    // Initialize
+    renderOptionsInputs();
+    toggleQuestionType();
+
+    // Make edit/delete functions global for onclick
+    window.editQuestion = editQuestion;
+    window.deleteQuestion = deleteQuestion;
+</script>
+</body>
+</html>
