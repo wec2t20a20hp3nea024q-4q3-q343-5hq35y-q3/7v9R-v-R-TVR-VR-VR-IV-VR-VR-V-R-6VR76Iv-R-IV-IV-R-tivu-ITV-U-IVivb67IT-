@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Paper maker v0.0.1.alpha</title>
+    <title>Paper maker v0.0.1.beta</title>
     <style>
         * {
             margin: 0;
@@ -22,7 +22,6 @@
             margin: 0 auto;
         }
 
-        /* Form Card */
         .card {
             background: white;
             border-radius: 1.5rem;
@@ -31,10 +30,9 @@
             margin-bottom: 2rem;
         }
 
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
+        h1, h2 {
             color: #1e3c72;
+            margin-bottom: 0.5rem;
         }
 
         .sub {
@@ -101,10 +99,6 @@
             font-size: 0.8rem;
         }
 
-        .btn-add-option:hover, .btn-remove-option:hover {
-            background: #e2e8f0;
-        }
-
         .button-bar {
             display: flex;
             gap: 1rem;
@@ -125,24 +119,20 @@
             background: #2c7da0;
             color: white;
         }
-
         .btn-primary:hover {
             background: #1f5e7a;
             transform: translateY(-2px);
         }
-
         .btn-secondary {
             background: #f1f5f9;
             border: 1px solid #cbd5e1;
         }
-
         .btn-danger {
             background: #ffeae9;
             color: #b91c1c;
             border: 1px solid #f5c6cb;
         }
 
-        /* Question List */
         .questions-list {
             margin-top: 1.5rem;
         }
@@ -174,12 +164,6 @@
             margin-right: 0.5rem;
         }
 
-        .question-actions button {
-            padding: 0.3rem 0.8rem;
-            font-size: 0.8rem;
-            margin-left: 0.5rem;
-        }
-
         hr {
             margin: 1.2rem 0;
             border: 0;
@@ -197,25 +181,24 @@
             .no-print {
                 display: none;
             }
-            .print-question {
-                page-break-after: avoid;
+            .cover-page {
+                page-break-after: always;
+                break-after: page;
+                margin: 0;
+                padding: 1.5cm;
+            }
+            .questions-section, .answers-section {
+                margin: 0;
+                padding: 1.5cm;
+            }
+            .question-block, .answer-block {
                 page-break-inside: avoid;
                 break-inside: avoid;
-                margin: 0;
-                padding: 1.2rem;
-                border: 1px solid #ddd;
-                border-radius: 0;
-                margin-bottom: 0;
+                margin-bottom: 1.5rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid #ddd;
             }
-            .print-question + .print-question {
-                page-break-before: avoid;
-                break-before: avoid;
-            }
-            /* Force a page break before a question if it would otherwise be split */
-            .print-question {
-                break-inside: avoid;
-            }
-            .page-break-before {
+            .answers-section {
                 page-break-before: always;
                 break-before: page;
             }
@@ -224,64 +207,99 @@
 </head>
 <body>
 <div class="container">
+    <!-- Cover Page Settings -->
     <div class="card no-print">
-        <h1>Paper maker</h1>
-        <div class="sub">Integrate questions to papers.</div>
+        <h2>📄 Cover Page Settings</h2>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Student Name</label>
+                <input type="text" id="studentName" placeholder="e.g., Chan Tai Man">
+            </div>
+            <div class="form-group">
+                <label>Class</label>
+                <input type="text" id="studentClass" placeholder="e.g., 6A">
+            </div>
+            <div class="form-group">
+                <label>Class Number</label>
+                <input type="text" id="studentNumber" placeholder="e.g., 23">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Paper Title</label>
+            <input type="text" id="paperTitle" value="Question Paper" placeholder="Exam Title">
+        </div>
+        <div class="form-group">
+            <label>Rules / Instructions</label>
+            <textarea id="rules" rows="3">1. Answer all questions.
+2. Write your answers in the spaces provided.
+3. Use a blue or black pen.
+4. Show all working for long questions.</textarea>
+        </div>
+        <div class="form-group">
+            <label>MC Marks per Question (Default)</label>
+            <input type="number" id="mcMarksDefault" value="5" min="1" step="1">
+        </div>
+    </div>
 
-        <!-- Form for adding questions -->
+    <!-- Question Builder -->
+    <div class="card no-print">
+        <h2>Add Questions</h2>
         <div class="form-row">
             <div class="form-group">
                 <label>Question Type</label>
                 <select id="qType">
-                    <option value="mc">Multiple Choice</option>
+                    <option value="mc">Multiple Choice (MC)</option>
                     <option value="long">Long Answer</option>
                 </select>
             </div>
         </div>
-
         <div class="form-group">
             <label>Question Text</label>
             <textarea id="qText" rows="2" placeholder="Enter the question..."></textarea>
         </div>
 
-        <!-- Dynamic area for MC options -->
-        <div id="mcOptionsArea" style="margin-top: 1rem;">
+        <!-- MC Options -->
+        <div id="mcOptionsArea">
             <label>Options (for MC)</label>
             <div id="optionsContainer"></div>
             <button type="button" class="btn-add-option" id="addOptionBtn" style="margin-top: 0.5rem;">+ Add Option</button>
             <div class="form-group" style="margin-top: 0.5rem;">
-                <label>Correct Answer Letter (A, B, C, D)</label>
+                <label>Correct Answer Letter (A, B, C, D...)</label>
                 <input type="text" id="correctLetter" placeholder="e.g., B" maxlength="1" style="width: 80px;">
             </div>
         </div>
 
-        <!-- Area for long answer reference -->
-        <div id="longAnswerArea" style="display: none; margin-top: 1rem;">
+        <!-- Long Answer Area -->
+        <div id="longAnswerArea" style="display: none;">
             <div class="form-group">
-                <label>Suggested Answer (optional)</label>
+                <label>Reference Answer (optional)</label>
                 <textarea id="refAnswer" rows="3" placeholder="Provide a model answer..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Marks for this question</label>
+                <input type="number" id="longMarks" value="10" min="1" step="1" style="width: 100px;">
             </div>
         </div>
 
         <div class="button-bar">
-            <button class="btn-primary" id="addBtn">Add Question</button>
-            <button class="btn-secondary" id="clearFormBtn">Clear Form</button>
+            <button class="btn-primary" id="addBtn">➕ Add Question</button>
+            <button class="btn-secondary" id="clearFormBtn">🗑️ Clear Form</button>
         </div>
     </div>
 
-    <!-- List of added questions -->
+    <!-- Question List -->
     <div class="card no-print">
         <h2>Questions (<span id="questionCount">0</span>)</h2>
         <div id="questionsList" class="questions-list"></div>
         <div class="button-bar">
-            <button class="btn-primary" id="generatePdfBtn">Create Paper!</button>
+            <button class="btn-primary" id="generatePdfBtn">Generate PDF (Questions + Answers)</button>
             <button class="btn-secondary" id="clearAllBtn">Clear All Questions</button>
         </div>
     </div>
 </div>
 
 <script>
-    // Store questions
+    // ---------- Data ----------
     let questions = [];
 
     // DOM elements
@@ -292,6 +310,7 @@
     const optionsContainer = document.getElementById('optionsContainer');
     const correctLetterInput = document.getElementById('correctLetter');
     const refAnswerTextarea = document.getElementById('refAnswer');
+    const longMarksInput = document.getElementById('longMarks');
     const addBtn = document.getElementById('addBtn');
     const clearFormBtn = document.getElementById('clearFormBtn');
     const questionsListDiv = document.getElementById('questionsList');
@@ -299,24 +318,30 @@
     const generatePdfBtn = document.getElementById('generatePdfBtn');
     const clearAllBtn = document.getElementById('clearAllBtn');
 
-    // Current options array
+    // Cover page elements
+    const studentNameInput = document.getElementById('studentName');
+    const studentClassInput = document.getElementById('studentClass');
+    const studentNumberInput = document.getElementById('studentNumber');
+    const paperTitleInput = document.getElementById('paperTitle');
+    const rulesTextarea = document.getElementById('rules');
+    const mcMarksDefaultInput = document.getElementById('mcMarksDefault');
+
+    // Current options for MC
     let currentOptions = ['Option A', 'Option B', 'Option C', 'Option D'];
 
-    // Toggle between MC and Long Answer UI
+    // Helper: toggle UI based on question type
     function toggleQuestionType() {
         const isMc = qTypeSelect.value === 'mc';
         mcOptionsDiv.style.display = isMc ? 'block' : 'none';
         longAnswerDiv.style.display = isMc ? 'none' : 'block';
-        if (isMc) {
-            renderOptionsInputs();
-        }
+        if (isMc) renderOptionsInputs();
     }
 
-    // Render the option inputs
+    // Render option inputs for MC
     function renderOptionsInputs() {
         optionsContainer.innerHTML = '';
         currentOptions.forEach((opt, idx) => {
-            const letter = String.fromCharCode(65 + idx); // A, B, C...
+            const letter = String.fromCharCode(65 + idx);
             const div = document.createElement('div');
             div.className = 'option-row';
             const input = document.createElement('input');
@@ -327,20 +352,18 @@
             const delBtn = document.createElement('button');
             delBtn.textContent = '✖';
             delBtn.className = 'btn-remove-option';
-            delBtn.type = 'button';
             delBtn.onclick = () => {
                 if (currentOptions.length > 2) {
                     currentOptions.splice(idx, 1);
                     renderOptionsInputs();
                 } else {
-                    alert('At least two options are required.');
+                    alert('At least two options required.');
                 }
             };
             div.appendChild(input);
             div.appendChild(delBtn);
             optionsContainer.appendChild(div);
         });
-        // Re-attach add button listener (it already exists, but ensure it works)
         const addOptBtn = document.getElementById('addOptionBtn');
         if (addOptBtn) {
             addOptBtn.onclick = () => {
@@ -355,7 +378,7 @@
         }
     }
 
-    // Get current question data from form
+    // Get current question from form
     function getCurrentQuestion() {
         const type = qTypeSelect.value;
         const text = qTextArea.value.trim();
@@ -363,32 +386,33 @@
             alert('Please enter question text.');
             return null;
         }
-        const base = {
-            type: type,
-            text: text
-        };
         if (type === 'mc') {
             if (currentOptions.length < 2) {
-                alert('At least two options required for MC.');
+                alert('At least two options required.');
                 return null;
             }
             const letter = correctLetterInput.value.trim().toUpperCase();
-            const validLetters = ['A','B','C','D','E','F'];
-            if (!validLetters.includes(letter) || (letter.charCodeAt(0)-65) >= currentOptions.length) {
-                alert(`Correct answer must be a letter A-${validLetters[currentOptions.length-1]}.`);
+            const letters = ['A','B','C','D','E','F'];
+            if (!letters.includes(letter) || (letter.charCodeAt(0)-65) >= currentOptions.length) {
+                alert(`Correct answer must be a letter A-${letters[currentOptions.length-1]}.`);
                 return null;
             }
             return {
-                ...base,
+                type: 'mc',
+                text: text,
                 options: [...currentOptions],
-                answer: letter
+                answer: letter,
+                points: parseInt(mcMarksDefaultInput.value, 10) || 5
             };
         } else {
-            // Long answer
             const ref = refAnswerTextarea.value.trim();
+            let points = parseInt(longMarksInput.value, 10);
+            if (isNaN(points) || points < 1) points = 10;
             return {
-                ...base,
-                reference: ref || '(No reference provided)'
+                type: 'long',
+                text: text,
+                reference: ref || '(No reference)',
+                points: points
             };
         }
     }
@@ -405,21 +429,21 @@
     // Clear form
     function clearForm() {
         qTextArea.value = '';
-        // Reset MC options to default
         currentOptions = ['Option A', 'Option B', 'Option C', 'Option D'];
         correctLetterInput.value = '';
         refAnswerTextarea.value = '';
+        longMarksInput.value = '10';
         renderOptionsInputs();
-        toggleQuestionType(); // refresh UI
+        toggleQuestionType();
     }
 
-    // Delete a question
+    // Delete question
     function deleteQuestion(index) {
         questions.splice(index, 1);
         renderQuestionsList();
     }
 
-    // Edit a question (load into form, then remove from list for re-add)
+    // Edit question
     function editQuestion(index) {
         const q = questions[index];
         qTypeSelect.value = q.type;
@@ -429,17 +453,16 @@
             correctLetterInput.value = q.answer;
         } else {
             refAnswerTextarea.value = q.reference;
+            longMarksInput.value = q.points;
         }
-        toggleQuestionType(); // show correct UI
-        renderOptionsInputs(); // refresh options
-        // Remove original so that after edit we can add again
+        toggleQuestionType();
+        renderOptionsInputs();
         questions.splice(index, 1);
         renderQuestionsList();
-        // Scroll to form
         document.querySelector('.card').scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Render the list of added questions
+    // Render question list
     function renderQuestionsList() {
         if (questions.length === 0) {
             questionsListDiv.innerHTML = '<div style="text-align:center; padding:1rem; color:#7f8c8d;">No questions added yet.</div>';
@@ -450,7 +473,9 @@
         questions.forEach((q, idx) => {
             let preview = `${q.type === 'mc' ? 'MC' : 'Long'}: ${q.text.substring(0, 70)}${q.text.length > 70 ? '…' : ''}`;
             if (q.type === 'mc') {
-                preview += ` (${q.options.length} options, answer: ${q.answer})`;
+                preview += ` (${q.options.length} options, answer: ${q.answer}, ${q.points} marks)`;
+            } else {
+                preview += ` (${q.points} marks)`;
             }
             html += `
                 <div class="question-item">
@@ -468,86 +493,152 @@
         questionCountSpan.textContent = questions.length;
     }
 
-    // Generate PDF using print method (respects CSS page breaks)
+    // Generate PDF with separate question and answer sections
     function generatePDF() {
         if (questions.length === 0) {
             alert('No questions to export.');
             return;
         }
 
-        // Build HTML for printing
-        let printHtml = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>Question Paper</title>
-                <style>
+        // Collect cover data
+        const studentName = escapeHtml(studentNameInput.value.trim()) || '_________________';
+        const studentClass = escapeHtml(studentClassInput.value.trim()) || '________';
+        const studentNumber = escapeHtml(studentNumberInput.value.trim()) || '________';
+        const paperTitle = escapeHtml(paperTitleInput.value.trim()) || 'Question Paper';
+        const rules = escapeHtml(rulesTextarea.value.trim()) || 'No specific rules.';
+        const mcMarksDefault = parseInt(mcMarksDefaultInput.value, 10) || 5;
+
+        // Calculate totals and LQ distribution
+        const mcQuestions = questions.filter(q => q.type === 'mc');
+        const longQuestions = questions.filter(q => q.type === 'long');
+        const totalMcMarks = mcQuestions.reduce((sum, q) => sum + (q.points || mcMarksDefault), 0);
+        let lqDistributionHtml = '';
+        longQuestions.forEach((q, idx) => {
+            lqDistributionHtml += `<li>Question ${idx+1} (${q.points} marks)</li>`;
+        });
+        const totalMarks = totalMcMarks + longQuestions.reduce((sum, q) => sum + q.points, 0);
+
+        // Build print HTML
+        let printHtml = `<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>${paperTitle}</title>
+            <style>
+                body {
+                    font-family: 'Segoe UI', 'Roboto', sans-serif;
+                    margin: 0;
+                    padding: 0;
+                    background: white;
+                }
+                .cover-page {
+                    padding: 1.5cm;
+                    page-break-after: always;
+                    break-after: page;
+                }
+                .questions-section, .answers-section {
+                    padding: 1.5cm;
+                }
+                .question-block, .answer-block {
+                    margin-bottom: 1.5rem;
+                    page-break-inside: avoid;
+                    break-inside: avoid;
+                    border-bottom: 1px solid #ddd;
+                    padding-bottom: 0.8rem;
+                }
+                .question-number, .answer-number {
+                    font-weight: bold;
+                    font-size: 1.1rem;
+                    margin-bottom: 0.5rem;
+                    color: #1e3c72;
+                }
+                .question-text {
+                    font-weight: 500;
+                    margin-bottom: 0.8rem;
+                    line-height: 1.4;
+                }
+                .options {
+                    margin-left: 1rem;
+                    margin-bottom: 0.8rem;
+                }
+                .option {
+                    margin: 0.3rem 0;
+                }
+                .answer-text {
+                    margin-top: 0.5rem;
+                    padding: 0.5rem;
+                    background: #f9fafc;
+                    border-left: 3px solid #2c7da0;
+                    font-size: 0.9rem;
+                }
+                .cover-title {
+                    text-align: center;
+                    font-size: 2rem;
+                    margin: 1rem 0 2rem;
+                }
+                .student-info {
+                    margin-bottom: 2rem;
+                    border-bottom: 1px solid #ccc;
+                    padding-bottom: 1rem;
+                }
+                .rules {
+                    margin: 2rem 0;
+                    padding: 1rem;
+                    background: #f8f9fc;
+                    border-left: 4px solid #2c7da0;
+                }
+                .marks-summary {
+                    margin: 1rem 0;
+                    padding: 1rem;
+                    background: #eef2fa;
+                }
+                hr {
+                    margin: 1rem 0;
+                }
+                .answers-section {
+                    page-break-before: always;
+                    break-before: page;
+                }
+                @media print {
                     body {
-                        font-family: 'Segoe UI', 'Roboto', sans-serif;
-                        margin: 0;
-                        padding: 1.5cm;
-                        background: white;
+                        padding: 0;
                     }
-                    .page {
-                        width: 100%;
-                    }
-                    .question-block {
-                        margin-bottom: 1.5rem;
-                        page-break-inside: avoid;
-                        break-inside: avoid;
-                        border-bottom: 1px solid #ddd;
-                        padding-bottom: 1rem;
-                    }
-                    .question-number {
-                        font-weight: bold;
-                        font-size: 1.1rem;
-                        margin-bottom: 0.5rem;
-                        color: #1e3c72;
-                    }
-                    .question-text {
-                        font-weight: 500;
-                        margin-bottom: 0.8rem;
-                        line-height: 1.4;
-                    }
-                    .options {
-                        margin-left: 1rem;
-                        margin-bottom: 0.8rem;
-                    }
-                    .option {
-                        margin: 0.3rem 0;
-                    }
-                    .answer-box {
-                        margin-top: 0.5rem;
-                        padding: 0.5rem;
-                        background: #f9fafc;
-                        border-left: 3px solid #2c7da0;
-                        font-size: 0.9rem;
-                    }
-                    .reference {
-                        color: #2c3e66;
-                    }
-                    hr {
-                        margin: 1rem 0;
-                    }
-                    @media print {
-                        body {
-                            padding: 0.5in;
-                        }
-                        .question-block {
-                            page-break-inside: avoid;
-                            break-inside: avoid;
-                        }
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="page">
+                }
+            </style>
+        </head>
+        <body>
+            <!-- Cover Page -->
+            <div class="cover-page">
+                <div class="student-info">
+                    <p><strong>Name:</strong> ${studentName}</p>
+                    <p><strong>Class:</strong> ${studentClass} &nbsp;&nbsp; <strong>Class No.:</strong> ${studentNumber}</p>
+                </div>
+                <div class="cover-title">${paperTitle}</div>
+                <div class="rules">
+                    <strong>Instructions:</strong><br>
+                    ${rules.replace(/\n/g, '<br>')}
+                </div>
+                <div class="marks-summary">
+                    <strong>Mark Distribution</strong><br>
+                    <strong>Section A: Multiple Choice</strong><br>
+                    Total marks: ${totalMcMarks} (${mcQuestions.length} questions × ${mcMarksDefault} marks each)<br>
+                    <strong>Section B: Long Answer Questions</strong><br>
+                    <ul>${lqDistributionHtml || '<li>No long questions</li>'}</ul>
+                    <hr>
+                    <strong>Total marks: ${totalMarks}</strong>
+                </div>
+                <div style="text-align: center; margin-top: 3rem;">Good luck!</div>
+            </div>
+
+            <!-- Questions Section (no answers) -->
+            <div class="questions-section">
+                <h2>Questions</h2>
         `;
 
+        // Add questions (without answers)
         questions.forEach((q, idx) => {
             printHtml += `<div class="question-block">`;
-            printHtml += `<div class="question-number">${idx+1}. ${q.type === 'mc' ? 'Multiple Choice' : 'Long Answer'}</div>`;
+            printHtml += `<div class="question-number">${idx+1}. ${q.type === 'mc' ? `Multiple Choice (${q.points} marks)` : `Long Answer (${q.points} marks)`}</div>`;
             printHtml += `<div class="question-text">${escapeHtml(q.text)}</div>`;
             if (q.type === 'mc') {
                 printHtml += `<div class="options">`;
@@ -556,34 +647,46 @@
                     printHtml += `<div class="option">${letters[optIdx]}. ${escapeHtml(opt)}</div>`;
                 });
                 printHtml += `</div>`;
-                printHtml += `<div class="answer-box"><strong>Answer:</strong> ${q.answer}</div>`;
-            } else {
-                if (q.reference) {
-                    printHtml += `<div class="answer-box reference"><strong>Reference Answer:</strong><br>${escapeHtml(q.reference)}</div>`;
-                } else {
-                    printHtml += `<div class="answer-box"><em>No reference answer provided.</em></div>`;
-                }
             }
             printHtml += `</div>`;
         });
 
-        printHtml += `
-                </div>
-            </body>
-            </html>
-        `;
+        printHtml += `</div>`;
 
-        // Open a new window and print
+        // Answers Section (new page)
+        printHtml += `<div class="answers-section"><h2>Answers</h2>`;
+        questions.forEach((q, idx) => {
+            printHtml += `<div class="answer-block">`;
+            printHtml += `<div class="answer-number">${idx+1}. ${q.type === 'mc' ? 'Multiple Choice' : 'Long Answer'}</div>`;
+            if (q.type === 'mc') {
+                printHtml += `<div class="answer-text"><strong>Correct Answer:</strong> ${q.answer}</div>`;
+            } else {
+                const reference = q.reference && q.reference !== '(No reference)' ? q.reference : 'No reference answer provided.';
+                printHtml += `<div class="answer-text"><strong>Reference Answer:</strong><br>${escapeHtml(reference)}</div>`;
+            }
+            printHtml += `</div>`;
+        });
+        printHtml += `</div>`;
+
+        printHtml += `</body></html>`;
+
         const printWindow = window.open('', '_blank');
         printWindow.document.write(printHtml);
         printWindow.document.close();
         printWindow.onload = () => {
             printWindow.print();
-            // Optional: close after print? Usually not, user can close.
         };
     }
 
-    // Escape HTML for safe printing
+    // Clear all questions
+    function clearAll() {
+        if (confirm('Delete all questions?')) {
+            questions = [];
+            renderQuestionsList();
+        }
+    }
+
+    // Escape HTML for safety
     function escapeHtml(str) {
         if (!str) return '';
         return str.replace(/[&<>]/g, function(m) {
@@ -596,14 +699,6 @@
         });
     }
 
-    // Clear all questions
-    function clearAll() {
-        if (confirm('Delete all questions?')) {
-            questions = [];
-            renderQuestionsList();
-        }
-    }
-
     // Event listeners
     qTypeSelect.addEventListener('change', toggleQuestionType);
     addBtn.addEventListener('click', addQuestion);
@@ -611,13 +706,13 @@
     generatePdfBtn.addEventListener('click', generatePDF);
     clearAllBtn.addEventListener('click', clearAll);
 
-    // Initialize
-    renderOptionsInputs();
-    toggleQuestionType();
-
-    // Make edit/delete functions global for onclick
+    // Make edit/delete global
     window.editQuestion = editQuestion;
     window.deleteQuestion = deleteQuestion;
+
+    // Initial UI setup
+    renderOptionsInputs();
+    toggleQuestionType();
 </script>
 </body>
 </html>
