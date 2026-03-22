@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ICT Past Papers 0.0.1.beta</title>
+    <title>ICT Past Papers 0.0.2.beta</title>
     <style>
         * {
             margin: 0;
@@ -168,17 +168,17 @@
             <div class="section-header" contenteditable="true">Databases</div>
             <div class="papers-list">
                 <div class="year-item">
-                    <a href="./databases/2017.pdf" target="_blank">
+                    <a href="./Databases/2017.pdf" target="_blank">
                         <span class="pdf-icon">📄</span> 2017
                     </a>
                 </div>
                 <div class="year-item">
-                    <a href="./databases/2018.pdf" target="_blank">
+                    <a href="./Databases/2018.pdf" target="_blank">
                         <span class="pdf-icon">📄</span> 2018
                     </a>
                 </div>
                 <div class="year-item">
-                    <a href="./databases/2019.pdf" target="_blank">
+                    <a href="./Databases/2019.pdf" target="_blank">
                         <span class="pdf-icon">📄</span> 2019
                     </a>
                 </div>
@@ -192,12 +192,12 @@
             <div class="section-header" contenteditable="true">Communication</div>
             <div class="papers-list">
                 <div class="year-item">
-                    <a href="./communication/2017.pdf" target="_blank">
+                    <a href="./Communication/2017.pdf" target="_blank">
                         <span class="pdf-icon">📄</span> 2017
                     </a>
                 </div>
                 <div class="year-item">
-                    <a href="./communication/2018.pdf" target="_blank">
+                    <a href="./Communication/2018.pdf" target="_blank">
                         <span class="pdf-icon">📄</span> 2018
                     </a>
                 </div>
@@ -247,7 +247,7 @@
             let sectionHeader = sectionCard.querySelector('.section-header');
             let sectionName = sectionHeader.textContent.trim();
             // Convert to folder name (lowercase, spaces replaced)
-            let folderName = sectionName.toLowerCase().replace(/\s+/g, '-');
+            let folderName = sectionName.replace(/\s+/g, '-');
             // Construct file path
             let filePath = `./${folderName}/${year}.pdf`;
             const newItem = document.createElement('div');
