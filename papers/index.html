@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Question Creator & PDF Exporter</title>
+    <title>Paper maker v0.0.1.alpha</title>
     <style>
         * {
             margin: 0;
@@ -225,15 +225,15 @@
 <body>
 <div class="container">
     <div class="card no-print">
-        <h1>📝 Question Builder</h1>
-        <div class="sub">Create multiple-choice and long-answer questions, then export to PDF with clean page breaks.</div>
+        <h1>Paper maker</h1>
+        <div class="sub">Integrate questions to papers.</div>
 
         <!-- Form for adding questions -->
         <div class="form-row">
             <div class="form-group">
                 <label>Question Type</label>
                 <select id="qType">
-                    <option value="mc">Multiple Choice (MC)</option>
+                    <option value="mc">Multiple Choice</option>
                     <option value="long">Long Answer</option>
                 </select>
             </div>
@@ -250,7 +250,7 @@
             <div id="optionsContainer"></div>
             <button type="button" class="btn-add-option" id="addOptionBtn" style="margin-top: 0.5rem;">+ Add Option</button>
             <div class="form-group" style="margin-top: 0.5rem;">
-                <label>Correct Answer Letter (A, B, C, D...)</label>
+                <label>Correct Answer Letter (A, B, C, D)</label>
                 <input type="text" id="correctLetter" placeholder="e.g., B" maxlength="1" style="width: 80px;">
             </div>
         </div>
@@ -258,24 +258,24 @@
         <!-- Area for long answer reference -->
         <div id="longAnswerArea" style="display: none; margin-top: 1rem;">
             <div class="form-group">
-                <label>Reference Answer (optional)</label>
+                <label>Suggested Answer (optional)</label>
                 <textarea id="refAnswer" rows="3" placeholder="Provide a model answer..."></textarea>
             </div>
         </div>
 
         <div class="button-bar">
-            <button class="btn-primary" id="addBtn">➕ Add Question</button>
-            <button class="btn-secondary" id="clearFormBtn">🗑️ Clear Form</button>
+            <button class="btn-primary" id="addBtn">Add Question</button>
+            <button class="btn-secondary" id="clearFormBtn">Clear Form</button>
         </div>
     </div>
 
     <!-- List of added questions -->
     <div class="card no-print">
-        <h2>📋 Questions (<span id="questionCount">0</span>)</h2>
+        <h2>Questions (<span id="questionCount">0</span>)</h2>
         <div id="questionsList" class="questions-list"></div>
         <div class="button-bar">
-            <button class="btn-primary" id="generatePdfBtn">📄 Generate PDF</button>
-            <button class="btn-secondary" id="clearAllBtn">🗑️ Clear All Questions</button>
+            <button class="btn-primary" id="generatePdfBtn">Create Paper!</button>
+            <button class="btn-secondary" id="clearAllBtn">Clear All Questions</button>
         </div>
     </div>
 </div>
