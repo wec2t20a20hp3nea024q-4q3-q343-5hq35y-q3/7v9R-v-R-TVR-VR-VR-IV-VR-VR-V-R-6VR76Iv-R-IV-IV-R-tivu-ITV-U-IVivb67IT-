@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Paper maker v0.0.1.beta</title>
+    <title>Exam Paper Builder - Questions & Answers Separate</title>
     <style>
         * {
             margin: 0;
@@ -202,6 +202,15 @@
                 page-break-before: always;
                 break-before: page;
             }
+            /* Font size for all question/answer text */
+            .question-text, .option, .answer-text {
+                font-size: 12pt !important;
+                line-height: 1.4;
+            }
+            .question-number, .answer-number {
+                font-size: 12pt !important;
+                font-weight: bold;
+            }
         }
     </style>
 </head>
@@ -225,8 +234,8 @@
             </div>
         </div>
         <div class="form-group">
-            <label>Paper Title</label>
-            <input type="text" id="paperTitle" value="Question Paper" placeholder="Exam Title">
+            <label>Subject</label>
+            <input type="text" id="subject" value="Mathematics" placeholder="e.g., Physics, Chemistry">
         </div>
         <div class="form-group">
             <label>Rules / Instructions</label>
@@ -243,7 +252,7 @@
 
     <!-- Question Builder -->
     <div class="card no-print">
-        <h2>Add Questions</h2>
+        <h2>✏️ Add Questions</h2>
         <div class="form-row">
             <div class="form-group">
                 <label>Question Type</label>
@@ -289,11 +298,11 @@
 
     <!-- Question List -->
     <div class="card no-print">
-        <h2>Questions (<span id="questionCount">0</span>)</h2>
+        <h2>📋 Questions (<span id="questionCount">0</span>)</h2>
         <div id="questionsList" class="questions-list"></div>
         <div class="button-bar">
-            <button class="btn-primary" id="generatePdfBtn">Generate PDF (Questions + Answers)</button>
-            <button class="btn-secondary" id="clearAllBtn">Clear All Questions</button>
+            <button class="btn-primary" id="generatePdfBtn">📄 Generate PDF (Questions + Answers)</button>
+            <button class="btn-secondary" id="clearAllBtn">🗑️ Clear All Questions</button>
         </div>
     </div>
 </div>
@@ -322,7 +331,7 @@
     const studentNameInput = document.getElementById('studentName');
     const studentClassInput = document.getElementById('studentClass');
     const studentNumberInput = document.getElementById('studentNumber');
-    const paperTitleInput = document.getElementById('paperTitle');
+    const subjectInput = document.getElementById('subject');
     const rulesTextarea = document.getElementById('rules');
     const mcMarksDefaultInput = document.getElementById('mcMarksDefault');
 
@@ -504,7 +513,8 @@
         const studentName = escapeHtml(studentNameInput.value.trim()) || '_________________';
         const studentClass = escapeHtml(studentClassInput.value.trim()) || '________';
         const studentNumber = escapeHtml(studentNumberInput.value.trim()) || '________';
-        const paperTitle = escapeHtml(paperTitleInput.value.trim()) || 'Question Paper';
+        const subject = escapeHtml(subjectInput.value.trim()) || 'Subject';
+        const paperTitle = `${subject} Mock Exam`;
         const rules = escapeHtml(rulesTextarea.value.trim()) || 'No specific rules.';
         const mcMarksDefault = parseInt(mcMarksDefaultInput.value, 10) || 5;
 
@@ -548,14 +558,17 @@
                 }
                 .question-number, .answer-number {
                     font-weight: bold;
-                    font-size: 1.1rem;
+                    font-size: 12pt;
                     margin-bottom: 0.5rem;
                     color: #1e3c72;
+                }
+                .question-text, .option, .answer-text {
+                    font-size: 12pt;
+                    line-height: 1.4;
                 }
                 .question-text {
                     font-weight: 500;
                     margin-bottom: 0.8rem;
-                    line-height: 1.4;
                 }
                 .options {
                     margin-left: 1rem;
@@ -569,7 +582,6 @@
                     padding: 0.5rem;
                     background: #f9fafc;
                     border-left: 3px solid #2c7da0;
-                    font-size: 0.9rem;
                 }
                 .cover-title {
                     text-align: center;
@@ -602,6 +614,9 @@
                 @media print {
                     body {
                         padding: 0;
+                    }
+                    .question-text, .option, .answer-text {
+                        font-size: 12pt !important;
                     }
                 }
             </style>
